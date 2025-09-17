@@ -92,6 +92,14 @@ export default function Upload() {
   const photoInputRef = useRef<HTMLInputElement>(null);
   const audioInputRef = useRef<HTMLInputElement>(null);
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const [cameraOpen, setCameraOpen] = useState(false);
+
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const [isRecording, setIsRecording] = useState(false);
+
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -161,6 +169,91 @@ export default function Upload() {
       setIsUploading(false);
     }
   };
+
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+      });
+      mediaStreamRef.current = stream;
+      setCameraOpen(true);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play().catch(() => {});
+      }
+    } catch {
+      toast.error(lang === "en" ? "Camera permission denied" : "कैमरा अनुमति अस्वीकृत");
+    }
+  };
+
+  const stopCamera = () => {
+    mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
+    mediaStreamRef.current = null;
+    setCameraOpen(false);
+  };
+
+  const capturePhoto = async () => {
+    if (!videoRef.current) return;
+    const video = videoRef.current;
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth || 1080;
+    canvas.height = video.videoHeight || 1080;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) return;
+        const file = new File([blob], "camera.jpg", { type: "image/jpeg" });
+        handleFileChange("photo", file);
+        stopCamera();
+      },
+      "image/jpeg",
+      0.92,
+    );
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      audioChunksRef.current = [];
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+      recorder.onstop = () => {
+        const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        const file = new File([blob], "voice-note.webm", { type: "audio/webm" });
+        handleFileChange("audio", file);
+        stream.getTracks().forEach((t) => t.stop());
+      };
+      recorder.start();
+      mediaRecorderRef.current = recorder;
+      setIsRecording(true);
+    } catch {
+      toast.error(lang === "en" ? "Microphone permission denied" : "माइक्रोफोन अनुमति अस्वीकृत");
+    }
+  };
+
+  const stopRecording = () => {
+    mediaRecorderRef.current?.stop();
+    mediaRecorderRef.current = null;
+    setIsRecording(false);
+  };
+
+  const toggleRecording = () => {
+    if (isRecording) stopRecording();
+    else startRecording();
+  };
+
+  useEffect(() => {
+    return () => {
+      stopCamera();
+      if (mediaRecorderRef.current && isRecording) {
+        stopRecording();
+      }
+    };
+  }, []);
 
   return (
     <motion.div
@@ -270,6 +363,40 @@ export default function Upload() {
                   }
                   className="hidden"
                 />
+                <div className="flex gap-3">
+                  <Button type="button" variant="outline" onClick={startCamera}>
+                    <Camera className="h-4 w-4 mr-2" />
+                    {lang === "en" ? "Use Camera" : "कैमरा इस्तेमाल करें"}
+                  </Button>
+                  {cameraOpen && (
+                    <span className="text-sm text-blue-600 self-center">
+                      {lang === "en" ? "Camera is on" : "कैमरा चालू है"}
+                    </span>
+                  )}
+                </div>
+                {cameraOpen && (
+                  <div className="mt-3 space-y-2">
+                    <video
+                      ref={videoRef}
+                      className="w-full rounded-lg"
+                      autoPlay
+                      muted
+                      playsInline
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        onClick={capturePhoto}
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        {lang === "en" ? "Capture" : "कैप्चर"}
+                      </Button>
+                      <Button type="button" variant="outline" onClick={stopCamera}>
+                        {lang === "en" ? "Cancel" : "रद्द करें"}
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Audio Upload */}
@@ -306,6 +433,27 @@ export default function Upload() {
                   }
                   className="hidden"
                 />
+                <div className="flex items-center gap-3">
+                  <Button
+                    type="button"
+                    variant={isRecording ? "destructive" : "outline"}
+                    onClick={toggleRecording}
+                  >
+                    <Mic className="h-4 w-4 mr-2" />
+                    {isRecording
+                      ? lang === "en"
+                        ? "Stop Recording"
+                        : "रिकॉर्डिंग रोकें"
+                      : lang === "en"
+                        ? "Record Voice"
+                        : "आवाज़ रिकॉर्ड करें"}
+                  </Button>
+                  {isRecording && (
+                    <span className="text-red-600 text-sm">
+                      ● {lang === "en" ? "Recording..." : "रिकॉर्डिंग..."}
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Submit Button */}
