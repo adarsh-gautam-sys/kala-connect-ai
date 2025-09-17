@@ -6,8 +6,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/convex/_generated/api";
 import { useMutation, useAction } from "convex/react";
 import { motion } from "framer-motion";
-import { Upload as UploadIcon, Camera, Mic, ArrowLeft, Loader2 } from "lucide-react";
-import { useState, useRef } from "react";
+import { Upload as UploadIcon, Camera, Mic, ArrowLeft, Loader2, Globe } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
@@ -17,6 +17,64 @@ export default function Upload() {
   const generateUploadUrl = useMutation(api.crafts.generateUploadUrl);
   const createCraft = useMutation(api.crafts.create);
   const processCraft = useAction(api.aiProcessing.processCraft);
+
+  // Language state
+  const [lang, setLang] = useState<"en" | "hi">(() => {
+    const saved = localStorage.getItem("lang");
+    return saved === "hi" || saved === "en" ? (saved as "en" | "hi") : "en";
+  });
+  useEffect(() => {
+    localStorage.setItem("lang", lang);
+    document.documentElement.lang = lang === "en" ? "en" : "hi";
+  }, [lang]);
+
+  const copy = {
+    en: {
+      back: "Back",
+      title: "Upload New Craft",
+      subtitle: "Tell us about your craft and upload files",
+      artisanNameLabel: "Artisan Name *",
+      artisanPlaceholder: "Your name",
+      whatsappLabel: "WhatsApp Number (optional)",
+      whatsappPlaceholder: "+91 9876543210",
+      photoLabel: "Craft Photo *",
+      photoClick: "Click to upload a photo",
+      audioLabel: "Voice Note *",
+      audioClick: "Click to upload a voice recording",
+      submit: "Create My Page",
+      processing: "Processing...",
+      fillAll: "Please fill all required fields",
+      uploadingFiles: "Uploading files...",
+      uploadSuccess: "Upload successful! Starting AI processing...",
+      finalSuccess: "Your craft page is ready!",
+      uploadError: "There was a problem with the upload. Please try again.",
+      langToggle: "EN",
+      langAlt: "HI",
+    },
+    hi: {
+      back: "वापस",
+      title: "नया शिल्प अपलोड करें",
+      subtitle: "अपने शिल्प के बारे में बताएं और फ़ाइलें अपलोड करें",
+      artisanNameLabel: "कलाकार का नाम *",
+      artisanPlaceholder: "आपका नाम",
+      whatsappLabel: "WhatsApp नंबर (वैकल्पिक)",
+      whatsappPlaceholder: "+91 9876543210",
+      photoLabel: "शिल्प का फोटो *",
+      photoClick: "फोटो अपलोड करने के लिए क्लिक करें",
+      audioLabel: "आवाज़ का नोट *",
+      audioClick: "आवाज़ रिकॉर्डिंग अपलोड करने के लिए क्लिक करें",
+      submit: "मेरा पेज बनाएं",
+      processing: "प्रोसेसिंग हो रही है...",
+      fillAll: "कृपया सभी आवश्यक फ़ील्ड भरें",
+      uploadingFiles: "फ़ाइलें अपलोड हो रही हैं...",
+      uploadSuccess: "अपलोड सफल! AI प्रोसेसिंग शुरू हो रही है...",
+      finalSuccess: "आपका शिल्प पेज तैयार हो गया है!",
+      uploadError: "अपलोड में समस्या हुई। कृपया दोबारा कोशिश करें।",
+      langToggle: "HI",
+      langAlt: "EN",
+    },
+  } as const;
+  const t = copy[lang];
 
   const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState({
@@ -66,14 +124,14 @@ export default function Upload() {
     e.preventDefault();
     
     if (!files.photo || !files.audio || !formData.artisanName) {
-      toast.error("कृपया सभी आवश्यक फ़ील्ड भरें");
+      toast.error(t.fillAll);
       return;
     }
 
     setIsUploading(true);
     
     try {
-      toast.loading("फ़ाइलें अपलोड हो रही हैं...");
+      toast.loading(t.uploadingFiles);
       
       // Upload files
       const [photoId, audioId] = await Promise.all([
@@ -89,17 +147,16 @@ export default function Upload() {
         whatsappNumber: formData.whatsappNumber || undefined,
       });
 
-      toast.success("अपलोड सफल! AI प्रोसेसिंग शुरू हो रही है...");
+      toast.success(t.uploadSuccess);
 
-      // Start AI processing
       await processCraft({ craftId });
 
-      toast.success("आपका शिल्प पेज तैयार हो गया है!");
+      toast.success(t.finalSuccess);
       navigate(`/craft/${craftId}`);
       
     } catch (error) {
       console.error("Upload failed:", error);
-      toast.error("अपलोड में समस्या हुई। कृपया दोबारा कोशिश करें।");
+      toast.error(t.uploadError);
     } finally {
       setIsUploading(false);
     }
@@ -114,21 +171,32 @@ export default function Upload() {
       {/* Header */}
       <div className="bg-white border-b">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center py-6">
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/dashboard")}
-              className="mr-4"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              वापस
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                नया शिल्प अपलोड करें
-              </h1>
-              <p className="text-gray-600">अपनी कलाकृति का फोटो और आवाज़ अपलोड करें</p>
+          <div className="flex items-center justify-between py-6">
+            <div className="flex items-center">
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/dashboard")}
+                className="mr-4"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                {t.back}
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {t.title}
+                </h1>
+                <p className="text-gray-600">{t.subtitle}</p>
+              </div>
             </div>
+            <Button
+              variant="outline"
+              onClick={() => setLang((prev) => (prev === "en" ? "hi" : "en"))}
+              aria-label={`Switch to ${t.langAlt}`}
+              title={`Switch to ${t.langAlt}`}
+            >
+              <Globe className="h-4 w-4 mr-2" />
+              {t.langToggle}
+            </Button>
           </div>
         </div>
       </div>
@@ -137,40 +205,42 @@ export default function Upload() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card>
           <CardHeader>
-            <CardTitle>शिल्प की जानकारी</CardTitle>
-            <CardDescription>
-              अपने शिल्प के बारे में बताएं और फ़ाइलें अपलोड करें
-            </CardDescription>
+            <CardTitle>{t.title}</CardTitle>
+            <CardDescription>{t.subtitle}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Artisan Name */}
               <div className="space-y-2">
-                <Label htmlFor="artisanName">कलाकार का नाम *</Label>
+                <Label htmlFor="artisanName">{t.artisanNameLabel}</Label>
                 <Input
                   id="artisanName"
                   value={formData.artisanName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, artisanName: e.target.value }))}
-                  placeholder="आपका नाम"
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, artisanName: e.target.value }))
+                  }
+                  placeholder={t.artisanPlaceholder}
                   required
                 />
               </div>
 
               {/* WhatsApp Number */}
               <div className="space-y-2">
-                <Label htmlFor="whatsapp">WhatsApp नंबर (वैकल्पिक)</Label>
+                <Label htmlFor="whatsapp">{t.whatsappLabel}</Label>
                 <Input
                   id="whatsapp"
                   value={formData.whatsappNumber}
-                  onChange={(e) => setFormData(prev => ({ ...prev, whatsappNumber: e.target.value }))}
-                  placeholder="+91 9876543210"
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, whatsappNumber: e.target.value }))
+                  }
+                  placeholder={t.whatsappPlaceholder}
                   type="tel"
                 />
               </div>
 
               {/* Photo Upload */}
               <div className="space-y-2">
-                <Label>शिल्प का फोटो *</Label>
+                <Label>{t.photoLabel}</Label>
                 <div
                   onClick={() => photoInputRef.current?.click()}
                   className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 transition-colors"
@@ -187,7 +257,7 @@ export default function Upload() {
                   ) : (
                     <div className="space-y-2">
                       <Camera className="h-12 w-12 text-gray-400 mx-auto" />
-                      <p className="text-gray-600">फोटो अपलोड करने के लिए क्लिक करें</p>
+                      <p className="text-gray-600">{t.photoClick}</p>
                     </div>
                   )}
                 </div>
@@ -195,14 +265,16 @@ export default function Upload() {
                   ref={photoInputRef}
                   type="file"
                   accept="image/*"
-                  onChange={(e) => handleFileChange("photo", e.target.files?.[0] || null)}
+                  onChange={(e) =>
+                    handleFileChange("photo", e.target.files?.[0] || null)
+                  }
                   className="hidden"
                 />
               </div>
 
               {/* Audio Upload */}
               <div className="space-y-2">
-                <Label>आवाज़ का नोट *</Label>
+                <Label>{t.audioLabel}</Label>
                 <div
                   onClick={() => audioInputRef.current?.click()}
                   className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 transition-colors"
@@ -212,13 +284,16 @@ export default function Upload() {
                       <Mic className="h-12 w-12 text-green-500 mx-auto" />
                       <p className="text-sm text-gray-600">{files.audio.name}</p>
                       <audio controls className="mx-auto">
-                        <source src={URL.createObjectURL(files.audio)} type={files.audio.type} />
+                        <source
+                          src={URL.createObjectURL(files.audio)}
+                          type={files.audio.type}
+                        />
                       </audio>
                     </div>
                   ) : (
                     <div className="space-y-2">
                       <Mic className="h-12 w-12 text-gray-400 mx-auto" />
-                      <p className="text-gray-600">आवाज़ रिकॉर्डिंग अपलोड करने के लिए क्लिक करें</p>
+                      <p className="text-gray-600">{t.audioClick}</p>
                     </div>
                   )}
                 </div>
@@ -226,7 +301,9 @@ export default function Upload() {
                   ref={audioInputRef}
                   type="file"
                   accept="audio/*"
-                  onChange={(e) => handleFileChange("audio", e.target.files?.[0] || null)}
+                  onChange={(e) =>
+                    handleFileChange("audio", e.target.files?.[0] || null)
+                  }
                   className="hidden"
                 />
               </div>
@@ -240,12 +317,12 @@ export default function Upload() {
                 {isUploading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    प्रोसेसिंग हो रही है...
+                    {t.processing}
                   </>
                 ) : (
                   <>
                     <UploadIcon className="h-4 w-4 mr-2" />
-                    मेरा पेज बनाएं
+                    {t.submit}
                   </>
                 )}
               </Button>

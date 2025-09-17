@@ -4,13 +4,66 @@ import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { motion } from "framer-motion";
-import { Plus, Package, Clock, CheckCircle, XCircle } from "lucide-react";
+import { Plus, Package, Clock, CheckCircle, XCircle, Globe } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
 
 export default function Dashboard() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const crafts = useQuery(api.crafts.getUserCrafts);
+
+  // Add language state with persistence
+  const [lang, setLang] = useState<"en" | "hi">(() => {
+    const saved = localStorage.getItem("lang");
+    return saved === "hi" || saved === "en" ? (saved as "en" | "hi") : "en";
+  });
+  useEffect(() => {
+    localStorage.setItem("lang", lang);
+    document.documentElement.lang = lang === "en" ? "en" : "hi";
+  }, [lang]);
+
+  const copy = {
+    en: {
+      hello: "Hello",
+      genericUser: "Artisan",
+      subtitle: "Your crafts dashboard",
+      addNew: "Add New Craft",
+      emptyTitle: "No crafts yet",
+      emptyBody: "Upload your first craft and generate your product page",
+      start: "Get Started",
+      viewPage: "View Page",
+      waiting: "Please wait",
+      processing: "Processing...",
+      uploading: "Uploading",
+      statusProcessing: "Processing",
+      statusCompleted: "Ready",
+      statusFailed: "Failed",
+      back: "Back",
+      langToggle: "EN",
+      langAlt: "HI",
+    },
+    hi: {
+      hello: "नमस्ते",
+      genericUser: "कलाकार",
+      subtitle: "आपके शिल्प का डैशबोर्ड",
+      addNew: "नया शिल्प जोड़ें",
+      emptyTitle: "अभी तक कोई शिल्प नहीं",
+      emptyBody: "अपना पहला शिल्प अपलोड करें और अपना उत्पाद पेज बनाएं",
+      start: "शुरू करें",
+      viewPage: "पेज देखें",
+      waiting: "प्रतीक्षा करें",
+      processing: "प्रोसेसिंग...",
+      uploading: "अपलोड हो रहा है",
+      statusProcessing: "प्रोसेसिंग हो रही है",
+      statusCompleted: "तैयार है",
+      statusFailed: "असफल",
+      back: "वापस",
+      langToggle: "HI",
+      langAlt: "EN",
+    },
+  } as const;
+  const t = copy[lang];
 
   if (authLoading) {
     return (
@@ -42,13 +95,13 @@ export default function Dashboard() {
   const getStatusText = (status: string) => {
     switch (status) {
       case "uploading":
-        return "अपलोड हो रहा है";
+        return t.uploading;
       case "processing":
-        return "प्रोसेसिंग हो रही है";
+        return t.statusProcessing;
       case "completed":
-        return "तैयार है";
+        return t.statusCompleted;
       case "failed":
-        return "असफल";
+        return t.statusFailed;
       default:
         return status;
     }
@@ -66,17 +119,28 @@ export default function Dashboard() {
           <div className="flex justify-between items-center py-6">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                नमस्ते, {user.name || "कलाकार"}
+                {t.hello}, {user.name || t.genericUser}
               </h1>
-              <p className="text-gray-600">आपके शिल्प का डैशबोर्ड</p>
+              <p className="text-gray-600">{t.subtitle}</p>
             </div>
-            <Button
-              onClick={() => navigate("/upload")}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              नया शिल्प जोड़ें
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setLang((prev) => (prev === "en" ? "hi" : "en"))}
+                aria-label={`Switch to ${t.langAlt}`}
+                title={`Switch to ${t.langAlt}`}
+              >
+                <Globe className="h-4 w-4 mr-2" />
+                {t.langToggle}
+              </Button>
+              <Button
+                onClick={() => navigate("/upload")}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                {t.addNew}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -91,17 +155,17 @@ export default function Dashboard() {
           >
             <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              अभी तक कोई शिल्प नहीं
+              {t.emptyTitle}
             </h3>
             <p className="text-gray-600 mb-6">
-              अपना पहला शिल्प अपलोड करें और अपना उत्पाद पेज बनाएं
+              {t.emptyBody}
             </p>
             <Button
               onClick={() => navigate("/upload")}
               className="bg-blue-600 hover:bg-blue-700"
             >
               <Plus className="h-4 w-4 mr-2" />
-              शुरू करें
+              {t.start}
             </Button>
           </motion.div>
         ) : (
@@ -125,7 +189,9 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <CardDescription>
-                      {new Date(craft._creationTime).toLocaleDateString("hi-IN")}
+                      {new Date(craft._creationTime).toLocaleDateString(
+                        lang === "en" ? "en-IN" : "hi-IN",
+                      )}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -145,15 +211,11 @@ export default function Dashboard() {
                           className="flex-1"
                           variant="default"
                         >
-                          पेज देखें
+                          {t.viewPage}
                         </Button>
                       ) : (
-                        <Button
-                          disabled
-                          className="flex-1"
-                          variant="outline"
-                        >
-                          {craft.status === "processing" ? "प्रोसेसिंग..." : "प्रतीक्षा करें"}
+                        <Button disabled className="flex-1" variant="outline">
+                          {craft.status === "processing" ? t.processing : t.waiting}
                         </Button>
                       )}
                     </div>
