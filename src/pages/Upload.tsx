@@ -18,6 +18,13 @@ export default function Upload() {
   const createCraft = useMutation(api.crafts.create);
   const processCraft = useAction(api.aiProcessing.processCraft);
 
+  // Add: Redirect via effect instead of during render to avoid hooks mismatch
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/auth");
+    }
+  }, [authLoading, user, navigate]);
+
   // Language state
   const [lang, setLang] = useState<"en" | "hi">(() => {
     const saved = localStorage.getItem("lang");
@@ -106,11 +113,6 @@ export default function Upload() {
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
-  }
-
-  if (!user) {
-    navigate("/auth");
-    return null;
   }
 
   const handleFileChange = (type: "photo" | "audio", file: File | null) => {
