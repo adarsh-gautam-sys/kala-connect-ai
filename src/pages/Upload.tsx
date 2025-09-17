@@ -182,6 +182,12 @@ export default function Upload() {
     }
   };
 
+  function stopCamera() {
+    mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
+    mediaStreamRef.current = null;
+    setCameraOpen(false);
+  }
+
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -196,12 +202,6 @@ export default function Upload() {
     } catch {
       toast.error(lang === "en" ? "Camera permission denied" : "कैमरा अनुमति अस्वीकृत");
     }
-  };
-
-  const stopCamera = () => {
-    mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
-    mediaStreamRef.current = null;
-    setCameraOpen(false);
   };
 
   const capturePhoto = async () => {
@@ -247,11 +247,11 @@ export default function Upload() {
     }
   };
 
-  const stopRecording = () => {
+  function stopRecording() {
     mediaRecorderRef.current?.stop();
     mediaRecorderRef.current = null;
     setIsRecording(false);
-  };
+  }
 
   const toggleRecording = () => {
     if (isRecording) stopRecording();
