@@ -251,7 +251,7 @@ export default function Landing() {
           {/* Right image panel */}
           <div className="relative h-[420px] md:h-[560px] lg:h-full">
             <img
-              src="https://harmless-tapir-303.convex.cloud/api/storage/fbc2ec23-b1d5-4bd9-8da8-faea686344e5"
+              src="https://harmless-tapir-303.convex.cloud/api/storage/d8a1de6d-57da-44b9-a928-9e6322def17a"
               alt="Artisan pottery in progress"
               className="w-full h-full object-cover"
             />
@@ -397,17 +397,6 @@ export default function Landing() {
           </div>
           <div className="mt-8 pt-8 border-t text-center text-gray-500">
             <p>© 2024 {t.brand}. All rights reserved.</p>
-            <p className="mt-2 text-sm">
-              {t.poweredBy}{" "}
-              <a
-                href="https://vly.ai"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-neutral-900 underline underline-offset-4 hover:opacity-80"
-              >
-                vly.ai
-              </a>
-            </p>
           </div>
         </div>
       </footer>
