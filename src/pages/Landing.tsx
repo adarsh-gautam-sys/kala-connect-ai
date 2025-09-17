@@ -181,16 +181,18 @@ export default function Landing() {
               <span className="text-2xl font-bold tracking-tight">{t.brand}</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" className="text-gray-600">{t.shopAll}</Button>
-              <Button variant="ghost" className="text-gray-600">{t.about}</Button>
-              <Button variant="ghost" className="text-gray-600">{t.contact}</Button>
+              <Button variant="ghost" className="text-gray-600">{"Shop All"}</Button>
+              <Button variant="ghost" className="text-gray-600">{"For Artisans"}</Button>
+              <Button variant="ghost" className="text-gray-600">{"Stories"}</Button>
+              <Button variant="ghost" className="text-gray-600">{"About"}</Button>
+              <Button variant="ghost" className="text-gray-600">{"Contact"}</Button>
 
               <Button
                 onClick={handleGetStarted}
                 disabled={isLoading}
                 className="bg-neutral-900 hover:bg-neutral-800 text-white"
               >
-                {isAuthenticated ? t.dashboard : t.start}
+                {isAuthenticated ? "Dashboard" : "Get Started"}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
 
@@ -210,51 +212,147 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* Split Hero (inspired by reference) */}
+      {/* Split Hero (updated styling) */}
       <section className="border-b">
         <div className="grid grid-cols-1 lg:grid-cols-2">
-          {/* Left panel */}
-          <div className="bg-[#eef3ef] flex items-center">
+          {/* Left panel with subtle gradient */}
+          <div
+            className="flex items-center"
+            style={{
+              background:
+                "radial-gradient(1200px 600px at -10% 20%, rgba(230, 212, 192, 0.6), transparent 60%), linear-gradient(180deg, #f7f3ee 0%, #efe7de 100%)",
+            }}
+          >
             <div className="w-full max-w-2xl mx-auto px-6 py-16 md:py-24">
               <div className="space-y-6">
                 <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-neutral-900">
-                  {t.heroTitleLine1}
-                  <br />
-                  {t.heroTitleLine2}
+                  The Beauty of Handcrafted Ceramics
                 </h1>
                 <p className="text-lg text-neutral-700">
-                  <span className="font-semibold">{t.heroSubTitleStrong}</span>
-                  {t.heroSubTitle}
+                  <span className="font-semibold">Embrace the Art of Clay — Where</span>
+                  {" "}Tradition Meets Creativity
                 </p>
                 <p className="text-neutral-600">
-                  {t.heroBody}
+                  Build a professional product page with just a photo and a voice note — powered by AI.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
+                  {/* Primary (filled): Shop Now */}
+                  <Button
+                    className="bg-[#a4553b] hover:bg-[#8f4731] text-white transition-colors"
+                  >
+                    Shop Now
+                  </Button>
+                  {/* Secondary (outlined): Get Started */}
                   <Button
                     variant="outline"
-                    className="border-neutral-900 text-neutral-900 hover:bg-neutral-900 hover:text-white"
+                    className="border-neutral-900 text-neutral-900 hover:bg-neutral-900 hover:text-white transition-colors"
                     onClick={handleGetStarted}
                   >
-                    {t.heroCTASecondary}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="text-neutral-700"
-                  >
-                    {t.heroCTA}
+                    Get Started
                   </Button>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right image panel */}
+          {/* Right image panel (unchanged image) */}
           <div className="relative h-[420px] md:h-[560px] lg:h-full">
             <img
               src="https://harmless-tapir-303.convex.cloud/api/storage/d8a1de6d-57da-44b9-a928-9e6322def17a"
               alt="Artisan pottery in progress"
               className="w-full h-full object-cover"
             />
+          </div>
+        </div>
+      </section>
+
+      {/* Value Proposition: 3-column icons */}
+      <section className="py-14 md:py-18 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 border rounded-xl bg-gradient-to-br from-[#faf6f2] to-white">
+              <div className="w-11 h-11 rounded-full bg-[#a4553b] text-white flex items-center justify-center mb-4">
+                <Sparkles className="h-5 w-5" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                AI-Powered Storytelling
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Turn voice notes into compelling product stories and captions.
+              </p>
+            </div>
+
+            <div className="p-6 border rounded-xl bg-gradient-to-br from-[#faf6f2] to-white">
+              <div className="w-11 h-11 rounded-full bg-[#8f4731] text-white flex items-center justify-center mb-4">
+                <Upload className="h-5 w-5" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                Instant Digital Storefront
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Create a polished page for your craft in minutes.
+              </p>
+            </div>
+
+            <div className="p-6 border rounded-xl bg-gradient-to-br from-[#faf6f2] to-white">
+              <div className="w-11 h-11 rounded-full bg-[#73402b] text-white flex items-center justify-center mb-4">
+                <Globe className="h-5 w-5" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                Global Reach for Local Crafts
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Share with buyers worldwide and grow your audience.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Brand Story */}
+      <section className="py-16 md:py-20 bg-[#f7f3ee]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Our Story
+              </h2>
+              <p className="text-lg text-gray-700">
+                KalaConnect empowers artisans with AI tools to showcase their craft, tell their stories, and reach global buyers.
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              <img
+                src="https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=600&auto=format&fit=crop"
+                alt="Artisan at work 1"
+                className="h-32 w-full object-cover rounded-lg"
+              />
+              <img
+                src="https://images.unsplash.com/photo-1523419409543-05aece9b77be?q=80&w=600&auto=format&fit=crop"
+                alt="Artisan ceramics 2"
+                className="h-32 w-full object-cover rounded-lg"
+              />
+              <img
+                src="https://images.unsplash.com/photo-1566837945700-30057527ade0?q=80&w=600&auto=format&fit=crop"
+                alt="Clay shaping 3"
+                className="h-32 w-full object-cover rounded-lg"
+              />
+              <img
+                src="https://images.unsplash.com/photo-1508161250369-0c3b3e8a04a5?q=80&w=600&auto=format&fit=crop"
+                alt="Pottery wheel 4"
+                className="h-32 w-full object-cover rounded-lg"
+              />
+              <img
+                src="https://images.unsplash.com/photo-1519677100203-a0e668c92439?q=80&w=600&auto=format&fit=crop"
+                alt="Handcrafted bowl 5"
+                className="h-32 w-full object-cover rounded-lg"
+              />
+              <img
+                src="https://images.unsplash.com/photo-1616499615995-11b8199e80a6?q=80&w=600&auto=format&fit=crop"
+                alt="Fired ceramics 6"
+                className="h-32 w-full object-cover rounded-lg"
+              />
+            </div>
           </div>
         </div>
       </section>
