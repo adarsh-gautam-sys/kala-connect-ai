@@ -77,6 +77,51 @@ export const processCraft = action({
   },
 });
 
+// Placeholder wrappers using requested names/signatures for future API integrations:
+
+/**
+ * TODO: Integrate Google Cloud Speech-to-Text here.
+ * Provide the audio file (Convex storage Id) and return the transcript.
+ */
+export async function process_speech_to_text(audio_file: Id<"_storage">): Promise<string> {
+  // For now, delegate to the internal helper (mocked).
+  return processSpeechToText(audio_file as unknown as string);
+}
+
+/**
+ * TODO: Integrate Google Translation API here.
+ * Translate the given text into the target language; also detect the source language.
+ */
+export async function translate_text(
+  text: string,
+  target_language: string
+): Promise<{ translatedText: string; detectedLanguage: string }> {
+  // For now, delegate to the internal helper (mocked).
+  return translateText(text, target_language);
+}
+
+/**
+ * TODO: Integrate Vertex AI Generative model here.
+ * Generate a product description and a social media caption from the provided text.
+ */
+export async function generate_story_and_caption(
+  text: string
+): Promise<{ productDescription: string; socialCaption: string }> {
+  // For now, delegate to the internal helper (mocked). Artisan name is optional in this placeholder.
+  return generateStoryAndCaption(text, "Artisan");
+}
+
+/**
+ * TODO: Integrate Vision AI here.
+ * Enhance an image given its Convex storage Id and return the enhanced file Id (or undefined if unchanged).
+ */
+export async function enhance_photo(
+  photo_file: Id<"_storage">
+): Promise<Id<"_storage"> | undefined> {
+  // For now, delegate to the internal helper (mocked).
+  return enhancePhoto(photo_file);
+}
+
 // TODO: Integrate Google Cloud Speech-to-Text API
 async function processSpeechToText(audioFileId: string): Promise<string> {
   // Placeholder implementation
