@@ -107,6 +107,16 @@ export default function Upload() {
   const audioChunksRef = useRef<Blob[]>([]);
   const [isRecording, setIsRecording] = useState(false);
 
+  // Add: Move cleanup effect BEFORE any conditional returns to keep hook order stable
+  useEffect(() => {
+    return () => {
+      stopCamera();
+      if (mediaRecorderRef.current && isRecording) {
+        stopRecording();
+      }
+    };
+  }, [isRecording]);
+
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -247,15 +257,6 @@ export default function Upload() {
     if (isRecording) stopRecording();
     else startRecording();
   };
-
-  useEffect(() => {
-    return () => {
-      stopCamera();
-      if (mediaRecorderRef.current && isRecording) {
-        stopRecording();
-      }
-    };
-  }, []);
 
   return (
     <motion.div
