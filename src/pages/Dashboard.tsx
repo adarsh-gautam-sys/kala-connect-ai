@@ -146,6 +146,13 @@ export default function Dashboard() {
               <p className="text-gray-600">{t.subtitle}</p>
             </div>
             <div className="flex items-center gap-2">
+              {/* New: Home button */}
+              <Button
+                variant="outline"
+                onClick={() => navigate("/")}
+              >
+                Home
+              </Button>
               <Button
                 variant="outline"
                 onClick={() => setLang((prev) => (prev === "en" ? "hi" : "en"))}
