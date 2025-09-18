@@ -155,6 +155,17 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   )}
                   
                   <div className="mt-4">
+                    <Button
+                      type="button"
+                      className="w-full"
+                      onClick={() => signIn("google")}
+                      disabled={isLoading}
+                    >
+                      Continue with Google
+                    </Button>
+                  </div>
+                    
+                    <div className="mt-4">
                     <div className="relative">
                       <div className="absolute inset-0 flex items-center">
                         <span className="w-full border-t" />

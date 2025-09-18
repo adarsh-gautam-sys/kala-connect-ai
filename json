@@ -1,0 +1,11 @@
+{
+  "tool": "multi_tool_use.parallel",
+  "tool_uses": [
+    {
+      "recipient_name": "functions.executeCommandTool",
+      "parameters": {
+        "command": "pnpm add @google-cloud/bigquery"
+      }
+    }
+  ]
+}

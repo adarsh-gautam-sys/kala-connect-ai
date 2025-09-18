@@ -8,4 +8,9 @@ declare global {
   }
 }
 
+declare module "@auth/core/providers/google" {
+  const Google: any;
+  export default Google;
+}
+
 export {};
