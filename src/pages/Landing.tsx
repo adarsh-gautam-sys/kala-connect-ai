@@ -15,10 +15,38 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  Menu,
+  Bell,
+  ShoppingCart,
+  ChevronDown,
+  User as UserIcon,
+  Settings as SettingsIcon,
+  LogOut as LogOutIcon,
+} from "lucide-react";
 
 export default function Landing() {
   const { isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const pathname = location.pathname;
 
   // Language state (en default) with localStorage persistence
   const [lang, setLang] = useState<"en" | "hi">(() => {
@@ -223,11 +251,123 @@ export default function Landing() {
       transition={{ duration: 0.4 }}
       className="min-h-screen bg-white"
     >
-      {/* Navigation */}
-      <nav className="bg-white border-b">
+      {/* Navigation - Redesigned */}
+      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-3">
+          <div className="flex justify-between items-center py-3">
+            {/* Left: Logo + Mobile menu */}
+            <div className="flex items-center gap-3">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="md:hidden">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-80">
+                  <SheetHeader>
+                    <SheetTitle>{t.brand}</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-6 space-y-4">
+                    {/* Mobile: Shop */}
+                    <div>
+                      <div className="text-xs uppercase text-gray-500 mb-2">Shop</div>
+                      <div className="grid gap-2">
+                        <Button variant="ghost" className="justify-start" onClick={() => navigate("/")}>
+                          Shop All
+                        </Button>
+                        <Button variant="ghost" className="justify-start">Categories</Button>
+                      </div>
+                    </div>
+                    {/* Mobile: For Artisans */}
+                    <div>
+                      <div className="text-xs uppercase text-gray-500 mb-2">For Artisans</div>
+                      <div className="grid gap-2">
+                        <Button variant="ghost" className="justify-start">Join as Artisan</Button>
+                        <Button variant="ghost" className="justify-start">Pricing</Button>
+                        <Button variant="ghost" className="justify-start" onClick={() => navigate("/dashboard")}>
+                          Dashboard
+                        </Button>
+                      </div>
+                    </div>
+                    {/* Mobile: Stories */}
+                    <div>
+                      <div className="text-xs uppercase text-gray-500 mb-2">Stories</div>
+                      <div className="grid gap-2">
+                        <Button variant="ghost" className="justify-start">Featured Artists</Button>
+                        <Button variant="ghost" className="justify-start">Blogs</Button>
+                      </div>
+                    </div>
+                    {/* Mobile: About */}
+                    <div>
+                      <div className="text-xs uppercase text-gray-500 mb-2">About</div>
+                      <div className="grid gap-2">
+                        <Button variant="ghost" className="justify-start">About Us</Button>
+                        <Button variant="ghost" className="justify-start">Mission</Button>
+                        <Button variant="ghost" className="justify-start">Team</Button>
+                      </div>
+                    </div>
+                    {/* Mobile: Contact */}
+                    <div>
+                      <div className="text-xs uppercase text-gray-500 mb-2">Contact</div>
+                      <div className="grid gap-2">
+                        <Button variant="ghost" className="justify-start">Contact Form</Button>
+                        <Button variant="ghost" className="justify-start">FAQs</Button>
+                      </div>
+                    </div>
+
+                    {/* Mobile: Language */}
+                    <div>
+                      <div className="text-xs uppercase text-gray-500 mb-2">Language</div>
+                      <div className="grid gap-2">
+                        <Button
+                          variant={lang === "en" ? "default" : "outline"}
+                          className="justify-start"
+                          onClick={() => setLang("en")}
+                        >
+                          English
+                        </Button>
+                        <Button
+                          variant={lang === "hi" ? "default" : "outline"}
+                          className="justify-start"
+                          onClick={() => setLang("hi")}
+                        >
+                          हिंदी
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Mobile: Auth */}
+                    <div className="pt-2 border-t">
+                      {isAuthenticated ? (
+                        <div className="grid gap-2">
+                          <Button className="justify-start" onClick={() => navigate("/dashboard")}>
+                            Dashboard
+                          </Button>
+                          <Button variant="outline" className="justify-start">
+                            Profile
+                          </Button>
+                          <Button variant="outline" className="justify-start">
+                            Settings
+                          </Button>
+                          <Button variant="destructive" className="justify-start" onClick={() => navigate("/auth")}>
+                            Logout
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex gap-2">
+                          <Button onClick={() => navigate("/auth")} className="flex-1">
+                            Sign In
+                          </Button>
+                          <Button variant="outline" onClick={() => navigate("/auth")} className="flex-1">
+                            Sign Up
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+
               <img
                 src="./logo.svg"
                 alt={`${t.brand} Logo`}
@@ -236,35 +376,168 @@ export default function Landing() {
                 className="rounded-lg cursor-pointer"
                 onClick={() => navigate("/")}
               />
-              <span className="text-2xl font-bold tracking-tight">{t.brand}</span>
+              <span
+                className="text-2xl font-bold tracking-tight cursor-pointer hidden sm:inline"
+                onClick={() => navigate("/")}
+              >
+                {t.brand}
+              </span>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" className="text-gray-600">{"Shop All"}</Button>
-              <Button variant="ghost" className="text-gray-600">{"For Artisans"}</Button>
-              <Button variant="ghost" className="text-gray-600">{"Stories"}</Button>
-              <Button variant="ghost" className="text-gray-600">{"About"}</Button>
-              <Button variant="ghost" className="text-gray-600">{"Contact"}</Button>
 
-              <Button
-                onClick={handleGetStarted}
-                disabled={isLoading}
-                className="bg-neutral-900 hover:bg-neutral-800 text-white"
-              >
-                {isAuthenticated ? "Dashboard" : "Get Started"}
-                <ArrowRight className="ml-2 h-4 w-4" />
+            {/* Center: Desktop nav with dropdowns */}
+            <div className="hidden md:flex items-center gap-2 lg:gap-4">
+              {/* Shop */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className={`group ${pathname.startsWith("/shop") ? "text-neutral-900 bg-neutral-100" : "text-gray-700"} hover:text-neutral-900`}
+                  >
+                    Shop
+                    <ChevronDown className="ml-1 h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem onClick={() => navigate("/")}>Shop All</DropdownMenuItem>
+                  <DropdownMenuItem>Categories</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* For Artisans */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className={`group ${pathname.startsWith("/dashboard") ? "text-neutral-900 bg-neutral-100" : "text-gray-700"} hover:text-neutral-900`}
+                  >
+                    For Artisans
+                    <ChevronDown className="ml-1 h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem>Join as Artisan</DropdownMenuItem>
+                  <DropdownMenuItem>Pricing</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/dashboard")}>Dashboard</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Stories */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="group text-gray-700 hover:text-neutral-900">
+                    Stories
+                    <ChevronDown className="ml-1 h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem>Featured Artists</DropdownMenuItem>
+                  <DropdownMenuItem>Blogs</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* About */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="group text-gray-700 hover:text-neutral-900">
+                    About
+                    <ChevronDown className="ml-1 h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem>About Us</DropdownMenuItem>
+                  <DropdownMenuItem>Mission</DropdownMenuItem>
+                  <DropdownMenuItem>Team</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Contact */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="group text-gray-700 hover:text-neutral-900">
+                    Contact
+                    <ChevronDown className="ml-1 h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem>Contact Form</DropdownMenuItem>
+                  <DropdownMenuItem>FAQs</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Right: Icons, language, auth */}
+            <div className="flex items-center gap-1 sm:gap-2">
+              {/* Shopping Cart */}
+              <Button variant="ghost" size="icon" aria-label="Cart" title="Cart">
+                <ShoppingCart className="h-5 w-5" />
+              </Button>
+              {/* Notifications */}
+              <Button variant="ghost" size="icon" aria-label="Notifications" title="Notifications">
+                <Bell className="h-5 w-5" />
               </Button>
 
-              {/* Language Toggle */}
-              <Button
-                variant="outline"
-                className="ml-1"
-                onClick={() => setLang((prev) => (prev === "en" ? "hi" : "en"))}
-                aria-label={`Switch to ${t.langAlt}`}
-                title={`Switch to ${t.langAlt}`}
-              >
-                <Globe className="h-4 w-4 mr-2" />
-                {t.langToggle}
-              </Button>
+              {/* Language selector dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="hidden sm:inline-flex">
+                    <Globe className="h-4 w-4 mr-2" />
+                    {t.langToggle}
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Language</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setLang("en")}>English</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLang("hi")}>हिंदी</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Auth conditional */}
+              {isAuthenticated ? (
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <Button
+                    onClick={() => navigate("/dashboard")}
+                    className="hidden sm:inline-flex bg-neutral-900 hover:bg-neutral-800 text-white"
+                  >
+                    Dashboard
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="p-0 h-9 w-9 rounded-full">
+                        <Avatar className="h-9 w-9">
+                          <AvatarFallback className="bg-neutral-200 text-neutral-700">
+                            KC
+                          </AvatarFallback>
+                        </Avatar>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-44">
+                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>
+                        <UserIcon className="mr-2 h-4 w-4" /> Profile
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <SettingsIcon className="mr-2 h-4 w-4" /> Settings
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => navigate("/auth")} className="text-red-600">
+                        <LogOutIcon className="mr-2 h-4 w-4" /> Logout
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              ) : (
+                <div className="hidden sm:flex items-center gap-2">
+                  <Button variant="ghost" onClick={() => navigate("/auth")}>
+                    Sign In
+                  </Button>
+                  <Button className="bg-neutral-900 hover:bg-neutral-800 text-white" onClick={() => navigate("/auth")}>
+                    Sign Up
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
