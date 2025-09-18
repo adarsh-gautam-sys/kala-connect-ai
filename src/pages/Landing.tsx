@@ -158,6 +158,64 @@ export default function Landing() {
     },
   ];
 
+  // Add: Smooth scroll to Shop section
+  const scrollToShop = () => {
+    const el = document.getElementById("shop");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  // Add: Demo products for the shop section (for demonstration purposes)
+  const demoProducts = [
+    {
+      id: "d1",
+      title: "Terracotta Vase",
+      price: "₹1,499",
+      image:
+        "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=800&auto=format&fit=crop",
+      blurb: "Handcrafted terracotta vase with natural glaze.",
+    },
+    {
+      id: "d2",
+      title: "Earthy Clay Cup Set",
+      price: "₹899",
+      image:
+        "https://images.unsplash.com/photo-1519677100203-a0e668c92439?q=80&w=800&auto=format&fit=crop",
+      blurb: "Set of 2 cups — perfect for chai or coffee.",
+    },
+    {
+      id: "d3",
+      title: "Wheel-thrown Bowl",
+      price: "₹1,199",
+      image:
+        "https://images.unsplash.com/photo-1523419409543-05aece9b77be?q=80&w=800&auto=format&fit=crop",
+      blurb: "Minimal bowl with a warm, matte finish.",
+    },
+    {
+      id: "d4",
+      title: "Clay Planter",
+      price: "₹1,299",
+      image:
+        "https://images.unsplash.com/photo-1616499615995-11b8199e80a6?q=80&w=800&auto=format&fit=crop",
+      blurb: "Breathable clay pot for indoor greens.",
+    },
+    {
+      id: "d5",
+      title: "Serving Plate",
+      price: "₹1,099",
+      image:
+        "https://images.unsplash.com/photo-1508161250369-0c3b3e8a04a5?q=80&w=800&auto=format&fit=crop",
+      blurb: "Elegant plate with subtle rim detail.",
+    },
+    {
+      id: "d6",
+      title: "Decorative Jar",
+      price: "₹1,799",
+      image:
+        "https://images.unsplash.com/photo-1566837945700-30057527ade0?q=80&w=800&auto=format&fit=crop",
+      blurb: "Statement piece for living spaces.",
+    },
+  ] as const;
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -239,6 +297,7 @@ export default function Landing() {
                   {/* Primary (filled): Shop Now */}
                   <Button
                     className="bg-[#a4553b] hover:bg-[#8f4731] text-white transition-colors"
+                    onClick={scrollToShop}
                   >
                     Shop Now
                   </Button>
@@ -262,6 +321,65 @@ export default function Landing() {
               alt="Artisan pottery in progress"
               className="w-full h-full object-cover"
             />
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Crafts (Shop) */}
+      <section id="shop" className="py-16 md:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+              {lang === "en" ? "Featured Crafts" : "विशेष शिल्प"}
+            </h2>
+            <p className="text-lg text-gray-600">
+              {lang === "en"
+                ? "A glimpse of how artisan products will look in your storefront"
+                : "आपके स्टोरफ्रंट में उत्पाद ऐसे दिखाई देंगे"}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {demoProducts.map((item, i) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+                viewport={{ once: true }}
+              >
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="aspect-square overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          {item.title}
+                        </h3>
+                        <p className="text-sm text-gray-600">{item.blurb}</p>
+                      </div>
+                      <div className="text-right font-semibold text-gray-900">
+                        {item.price}
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <Button
+                        className="w-full bg-neutral-900 hover:bg-neutral-800 text-white"
+                        onClick={handleGetStarted}
+                      >
+                        {lang === "en" ? "View Details" : "विवरण देखें"}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
