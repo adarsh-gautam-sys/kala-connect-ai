@@ -23,7 +23,18 @@ import "./types/global.d.ts";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
+function initThemeOnce() {
+  try {
+    const saved = localStorage.getItem("theme");
+    const root = document.documentElement;
+    if (saved === "dark") root.classList.add("dark");
+    else root.classList.remove("dark");
+  } catch {
+    // no-op
+  }
+}
 
+initThemeOnce();
 
 function RouteSyncer() {
   const location = useLocation();

@@ -22,8 +22,13 @@ import {
   Settings as SettingsIcon,
   LogOut as LogOutIcon,
   Globe,
+  ShoppingCart,
+  Heart,
 } from "lucide-react";
-import { memo } from "react";
+import React, { memo } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useCart } from "@/hooks/use-cart";
 
 type Props = {
   brand: string;
@@ -62,6 +67,9 @@ function NavbarImpl({
     if (isAuthenticated) onNavigate("/upload");
     else onNavigate("/auth");
   };
+
+  const { items, count, total, remove, clear, updateQty } = useCart();
+  const [cartOpen, setCartOpen] = React.useState(false);
 
   return (
     <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b shadow-sm">
@@ -261,6 +269,81 @@ function NavbarImpl({
                 <DropdownMenuItem onClick={() => setLang("hi")}>हिंदी</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            <Button
+              onClick={() => onNavigate("/shop")}
+              variant="ghost"
+              className="hidden md:inline-flex"
+            >
+              Shop
+            </Button>
+
+            <Sheet open={cartOpen} onOpenChange={setCartOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline" className="inline-flex items-center gap-2">
+                  <ShoppingCart className="h-4 w-4" />
+                  {count > 0 ? <span className="ml-1 text-sm font-semibold">({count})</span> : null}
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[380px] sm:w-[420px]">
+                <SheetHeader>
+                  <SheetTitle>Your Cart</SheetTitle>
+                </SheetHeader>
+                <div className="mt-4 space-y-3">
+                  {items.length === 0 ? (
+                    <div className="text-sm text-gray-600">Your cart is empty.</div>
+                  ) : (
+                    <>
+                      <div className="space-y-3 max-h-[60vh] overflow-auto pr-1">
+                        {items.map((it) => (
+                          <Card key={it.id} className="overflow-hidden">
+                            <CardContent className="p-3">
+                              <div className="flex gap-3">
+                                <img
+                                  src={it.image}
+                                  alt={it.title}
+                                  className="h-16 w-16 rounded object-cover"
+                                />
+                                <div className="flex-1">
+                                  <div className="font-semibold text-sm">{it.title}</div>
+                                  <div className="text-xs text-gray-600">₹{it.price}</div>
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <Input
+                                      type="number"
+                                      min={1}
+                                      value={it.quantity}
+                                      onChange={(e) => updateQty(it.id, Number(e.target.value || 1))}
+                                      className="h-8 w-16"
+                                    />
+                                    <Button size="sm" variant="ghost" onClick={() => remove(it.id)}>
+                                      Remove
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                      <div className="pt-3 border-t">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="text-sm text-gray-700">Total</div>
+                          <div className="font-semibold">₹{total}</div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button className="flex-1 bg-neutral-900 hover:bg-neutral-800 text-white">
+                            Checkout
+                          </Button>
+                          <Button variant="outline" onClick={clear}>
+                            Clear
+                          </Button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
 
             {isAuthenticated ? (
               <div className="flex items-center gap-1 sm:gap-2">

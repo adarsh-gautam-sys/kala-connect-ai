@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import { Heart } from "lucide-react";
+import { useCart, useWishlist } from "@/hooks/use-cart";
 
 type Product = {
   id: string;
@@ -55,6 +57,9 @@ export default function ShopPage() {
       return next;
     });
   }
+
+  const { add } = useCart();
+  const { has, toggle } = useWishlist();
 
   const filtered = React.useMemo(() => {
     return ALL_PRODUCTS.filter(p =>
@@ -158,15 +163,28 @@ export default function ShopPage() {
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
-                          <div className="flex gap-2 mt-1">
-                            <Badge variant="secondary">{item.material}</Badge>
-                            <Badge variant="outline">{item.artisan}</Badge>
-                          </div>
+                          <div className="text-sm text-neutral-600 mt-1">{item.material} • by {item.artisan}</div>
                         </div>
                         <div className="text-right font-semibold text-gray-900">₹{item.price}</div>
                       </div>
-                      <div className="mt-4">
-                        <Button className="w-full bg-neutral-900 hover:bg-neutral-800 text-white">View Details</Button>
+                      <div className="mt-4 flex gap-2">
+                        <Button
+                          className="flex-1 bg-neutral-900 hover:bg-neutral-800 text-white"
+                          onClick={() =>
+                            add({ id: item.id, title: item.title, price: item.price, image: item.image }, 1)
+                          }
+                        >
+                          Add to Cart
+                        </Button>
+                        <Button
+                          variant={has(item.id) ? "default" : "outline"}
+                          className={has(item.id) ? "bg-red-600 hover:bg-red-700 text-white" : ""}
+                          onClick={() => toggle(item.id)}
+                          aria-label="Toggle wishlist"
+                          title={has(item.id) ? "Remove from wishlist" : "Add to wishlist"}
+                        >
+                          <Heart className={`h-4 w-4 ${has(item.id) ? "fill-current" : ""}`} />
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
