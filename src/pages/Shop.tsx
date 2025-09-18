@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,9 +29,8 @@ const CATEGORIES = ["Ceramics", "Paintings", "Textiles", "Sculptures", "Jewelry"
 const MATERIALS = ["Any", "Clay", "Watercolor", "Cotton", "Wood", "Brass"] as const;
 
 export default function Shop() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const params = new URLSearchParams(location.search);
+  // Use window directly to avoid router context dependency
+  const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
   const initialCategory = (params.get("category") as Product["category"]) || "Ceramics";
 
   const [category, setCategory] = useState<Product["category"]>(initialCategory);
@@ -68,7 +66,10 @@ export default function Shop() {
 
   const handleCategoryClick = (c: Product["category"]) => {
     setCategory(c);
-    navigate(`/shop?category=${encodeURIComponent(c)}`);
+    if (typeof window !== "undefined") {
+      const url = `/shop?category=${encodeURIComponent(c)}`;
+      window.history.pushState({}, "", url);
+    }
   };
 
   return (
