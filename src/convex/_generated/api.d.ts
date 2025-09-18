@@ -19,6 +19,7 @@ import type * as auth from "../auth.js";
 import type * as config from "../config.js";
 import type * as crafts from "../crafts.js";
 import type * as http from "../http.js";
+import type * as seed from "../seed.js";
 import type * as users from "../users.js";
 
 /**
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   config: typeof config;
   crafts: typeof crafts;
   http: typeof http;
+  seed: typeof seed;
   users: typeof users;
 }>;
 export declare const api: FilterApi<

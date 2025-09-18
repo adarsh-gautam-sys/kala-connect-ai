@@ -7,11 +7,16 @@ import { motion } from "framer-motion";
 import { Plus, Package, Clock, CheckCircle, XCircle, Globe } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
+import { useAction } from "convex/react";
+import { useMutation } from "convex/react";
+import { toast } from "sonner";
 
 export default function Dashboard() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const crafts = useQuery(api.crafts.getUserCrafts);
+  const setRole = useMutation(api.users.setRole);
+  const seedDemo = useAction(api.seed.demo);
 
   // Add language state with persistence
   const [lang, setLang] = useState<"en" | "hi">(() => {
@@ -107,6 +112,25 @@ export default function Dashboard() {
     }
   };
 
+  const handleSetRole = async (role: "member" | "user") => {
+    try {
+      await setRole({ role });
+      toast.success(lang === "en" ? "Role saved" : "भूमिका सेव हो गई");
+    } catch {
+      toast.error(lang === "en" ? "Failed to save role" : "भूमिका सेव करने में विफल");
+    }
+  };
+
+  const handleSeedDemo = async () => {
+    try {
+      toast.loading(lang === "en" ? "Seeding demo crafts..." : "डेमो शिल्प जोड़े जा रहे हैं...");
+      await seedDemo({});
+      toast.success(lang === "en" ? "Demo crafts added" : "डेमो शिल्प जोड़ दिए गए");
+    } catch {
+      toast.error(lang === "en" ? "Failed to add demo crafts" : "डेमो शिल्प जोड़ने में विफल");
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -144,6 +168,34 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Role selection banner (only if user has no role) */}
+      {!user?.role && (
+        <div className="bg-amber-50 border-b border-amber-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+              <p className="text-amber-900 font-medium">
+                {lang === "en"
+                  ? "Choose how you want to use KalaConnect"
+                  : "कलाConnect का उपयोग कैसे करना चाहते हैं चुनें"}
+              </p>
+              <p className="text-amber-800 text-sm">
+                {lang === "en"
+                  ? "Select a role to personalize your experience."
+                  : "अपने अनुभव को वैयक्तिक बनाने के लिए भूमिका चुनें।"}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => handleSetRole("member")}>
+                {lang === "en" ? "Buyer" : "खरीदार"}
+              </Button>
+              <Button onClick={() => handleSetRole("user")} className="bg-blue-600 hover:bg-blue-700">
+                {lang === "en" ? "Artisan" : "कलाकार"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
