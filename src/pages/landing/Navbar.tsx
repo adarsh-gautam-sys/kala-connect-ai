@@ -173,7 +173,7 @@ function NavbarImpl({
             </Sheet>
 
             <img
-              src="./logo.svg"
+              src="/logo.svg"
               alt={`${t.brand} Logo`}
               width={40}
               height={40}
