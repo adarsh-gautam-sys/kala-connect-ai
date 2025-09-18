@@ -18,28 +18,40 @@ function emitChange() {
   emitter.dispatchEvent(new Event("change"));
 }
 
-function readCart(): CartItem[] {
+// Add referentially stable caches and initialize once
+let cartCache: CartItem[] = [];
+let wishlistCache: string[] = [];
+
+(function initCaches() {
   try {
-    const raw = localStorage.getItem(CART_KEY);
-    return raw ? (JSON.parse(raw) as CartItem[]) : [];
+    const rawCart = localStorage.getItem(CART_KEY);
+    cartCache = rawCart ? (JSON.parse(rawCart) as CartItem[]) : [];
   } catch {
-    return [];
+    cartCache = [];
   }
+  try {
+    const rawWishlist = localStorage.getItem(WISHLIST_KEY);
+    wishlistCache = rawWishlist ? (JSON.parse(rawWishlist) as string[]) : [];
+  } catch {
+    wishlistCache = [];
+  }
+})();
+
+// Update read/write helpers to use caches (stable references)
+function readCart(): CartItem[] {
+  return cartCache;
 }
 function writeCart(items: CartItem[]) {
+  cartCache = items;
   localStorage.setItem(CART_KEY, JSON.stringify(items));
   emitChange();
 }
 
 function readWishlist(): string[] {
-  try {
-    const raw = localStorage.getItem(WISHLIST_KEY);
-    return raw ? (JSON.parse(raw) as string[]) : [];
-  } catch {
-    return [];
-  }
+  return wishlistCache;
 }
 function writeWishlist(ids: string[]) {
+  wishlistCache = ids;
   localStorage.setItem(WISHLIST_KEY, JSON.stringify(ids));
   emitChange();
 }
@@ -47,9 +59,26 @@ function writeWishlist(ids: string[]) {
 function subscribe(callback: () => void) {
   const handler = () => callback();
   emitter.addEventListener("change", handler);
-  // Also react to cross-tab updates
+  // Also react to cross-tab updates and refresh caches before notifying
   const storageHandler = (e: StorageEvent) => {
-    if (e.key === CART_KEY || e.key === WISHLIST_KEY) callback();
+    if (e.key === CART_KEY) {
+      try {
+        cartCache = e.newValue ? (JSON.parse(e.newValue) as CartItem[]) : [];
+      } catch {
+        cartCache = [];
+      }
+      callback();
+      return;
+    }
+    if (e.key === WISHLIST_KEY) {
+      try {
+        wishlistCache = e.newValue ? (JSON.parse(e.newValue) as string[]) : [];
+      } catch {
+        wishlistCache = [];
+      }
+      callback();
+      return;
+    }
   };
   window.addEventListener("storage", storageHandler);
   return () => {
