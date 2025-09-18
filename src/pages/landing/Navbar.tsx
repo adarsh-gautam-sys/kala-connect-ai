@@ -1,12 +1,4 @@
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Sheet,
@@ -24,6 +16,8 @@ import {
   Globe,
   ShoppingCart,
   Heart,
+  Sun,
+  Moon,
 } from "lucide-react";
 import React, { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -70,6 +64,26 @@ function NavbarImpl({
 
   const { items, count, total, remove, clear, updateQty } = useCart();
   const [cartOpen, setCartOpen] = React.useState(false);
+
+  // Add theme toggle (persisted)
+  const [theme, setTheme] = React.useState<"light" | "dark">(() => {
+    try {
+      const saved = localStorage.getItem("theme");
+      return saved === "dark" ? "dark" : "light";
+    } catch {
+      return "light";
+    }
+  });
+  React.useEffect(() => {
+    try {
+      localStorage.setItem("theme", theme);
+      const root = document.documentElement;
+      if (theme === "dark") root.classList.add("dark");
+      else root.classList.remove("dark");
+    } catch {
+      // no-op
+    }
+  }, [theme]);
 
   return (
     <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b shadow-sm">
@@ -197,78 +211,51 @@ function NavbarImpl({
           </div>
 
           <div className="hidden md:flex items-center gap-2 lg:gap-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className={`group ${pathname.startsWith("/dashboard") ? "text-neutral-900 bg-neutral-100" : "text-gray-700"} hover:text-neutral-900`}
-                >
-                  For Artisans
-                  <ChevronDown className="ml-1 h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem onClick={() => scrollToId("how-it-works")}>How It Works</DropdownMenuItem>
-                <DropdownMenuItem onClick={joinAsArtisan}>Join as Artisan</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onNavigate("/artisans")}>Pricing & Benefits</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onNavigate("/stories")}>Success Stories</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="group text-gray-700 hover:text-neutral-900">
-                  Stories
-                  <ChevronDown className="ml-1 h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem onClick={() => onNavigate("/stories")}>Featured Artists</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="group text-gray-700 hover:text-neutral-900">
-                  About
-                  <ChevronDown className="ml-1 h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem onClick={() => onNavigate("/about")}>About Us</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onNavigate("/team")}>Team</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="group text-gray-700 hover:text-neutral-900">
-                  Contact
-                  <ChevronDown className="ml-1 h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem onClick={() => onNavigate("/contact")}>Contact Form</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button
+              variant="ghost"
+              className={`${
+                pathname.startsWith("/dashboard")
+                  ? "text-neutral-900 bg-neutral-100"
+                  : "text-gray-700"
+              } hover:text-neutral-900`}
+              onClick={() => scrollToId("how-it-works")}
+            >
+              For Artisans
+            </Button>
+            <Button
+              variant="ghost"
+              className="text-gray-700 hover:text-neutral-900"
+              onClick={() => onNavigate("/stories")}
+            >
+              Stories
+            </Button>
+            <Button
+              variant="ghost"
+              className="text-gray-700 hover:text-neutral-900"
+              onClick={() => onNavigate("/about")}
+            >
+              About
+            </Button>
+            <Button
+              variant="ghost"
+              className="text-gray-700 hover:text-neutral-900"
+              onClick={() => onNavigate("/contact")}
+            >
+              Contact
+            </Button>
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="hidden sm:inline-flex">
-                  <Globe className="h-4 w-4 mr-2" />
-                  {t.langToggle}
-                  <ChevronDown className="ml-1 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Language</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setLang("en")}>English</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLang("hi")}>हिंदी</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button
+              variant="outline"
+              className="hidden sm:inline-flex"
+              onClick={() => setLang(lang === "en" ? "hi" : "en")}
+              aria-label="Toggle language"
+              title="Toggle language"
+            >
+              <Globe className="h-4 w-4 mr-2" />
+              {lang === "en" ? "EN" : "HI"}
+            </Button>
 
             <Button
               onClick={() => onNavigate("/shop")}
@@ -276,6 +263,15 @@ function NavbarImpl({
               className="hidden md:inline-flex"
             >
               Shop
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              aria-label="Toggle theme"
+              title="Toggle theme"
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
 
             <Sheet open={cartOpen} onOpenChange={setCartOpen}>
@@ -353,36 +349,32 @@ function NavbarImpl({
                 >
                   Dashboard
                 </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="p-0 h-9 w-9 rounded-full">
-                      <Avatar className="h-9 w-9">
-                        <AvatarFallback className="bg-neutral-200 text-neutral-700">KC</AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-44">
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <UserIcon className="mr-2 h-4 w-4" /> Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <SettingsIcon className="mr-2 h-4 w-4" /> Settings
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => onNavigate("/auth")} className="text-red-600">
-                      <LogOutIcon className="mr-2 h-4 w-4" /> Logout
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Button
+                  variant="ghost"
+                  className="p-0 h-9 w-9 rounded-full"
+                  onClick={() => onNavigate("/dashboard")}
+                  aria-label="Profile"
+                  title="Profile"
+                >
+                  <Avatar className="h-9 w-9">
+                    <AvatarFallback className="bg-neutral-200 text-neutral-700">
+                      KC
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+                <Button variant="outline" onClick={() => onNavigate("/auth")}>
+                  Logout
+                </Button>
               </div>
             ) : (
               <div className="hidden sm:flex items-center gap-2">
                 <Button variant="ghost" onClick={() => onNavigate("/auth")}>
                   Sign In
                 </Button>
-                <Button className="bg-neutral-900 hover:bg-neutral-800 text-white" onClick={() => onNavigate("/auth")}>
+                <Button
+                  className="bg-neutral-900 hover:bg-neutral-800 text-white"
+                  onClick={() => onNavigate("/auth")}
+                >
                   Sign Up
                 </Button>
               </div>
