@@ -13,7 +13,7 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router";
 import "./index.css";
 import Landing from "./pages/Landing.tsx";
 import NotFound from "./pages/NotFound.tsx";
-import Shop from "@/pages/Shop.tsx";
+import ShopPage from "@/pages/Shop.tsx";
 import Stories from "@/pages/Stories.tsx";
 import About from "@/pages/About.tsx";
 import Team from "@/pages/Team.tsx";
@@ -62,7 +62,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/upload" element={<Upload />} />
             <Route path="/craft/:id" element={<CraftPage />} />
-            <Route path="/shop" element={<Shop />} />
+            <Route path="/shop" element={<ShopPage />} />
             <Route path="/stories" element={<Stories />} />
             <Route path="/about" element={<About />} />
             <Route path="/team" element={<Team />} />

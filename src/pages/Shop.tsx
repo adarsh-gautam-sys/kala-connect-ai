@@ -1,3 +1,4 @@
+import React from "react";
 import { useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,15 +29,15 @@ const ALL_PRODUCTS: ReadonlyArray<Product> = [
 const CATEGORIES = ["Ceramics", "Paintings", "Textiles", "Sculptures", "Jewelry"] as const;
 const MATERIALS = ["Any", "Clay", "Watercolor", "Cotton", "Wood", "Brass"] as const;
 
-export default function Shop() {
+export default function ShopPage() {
   // Use window directly to avoid router context dependency
   const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
   const initialCategory = (params.get("category") as Product["category"]) || "Ceramics";
 
-  const [category, setCategory] = useState<Product["category"]>(initialCategory);
-  const [material, setMaterial] = useState<(typeof MATERIALS)[number]>("Any");
-  const [artisan, setArtisan] = useState("");
-  const [priceRange, setPriceRange] = useState<number[]>([0, 5000]);
+  const [category, setCategory] = React.useState<Product["category"]>(initialCategory);
+  const [material, setMaterial] = React.useState<(typeof MATERIALS)[number]>("Any");
+  const [artisan, setArtisan] = React.useState("");
+  const [priceRange, setPriceRange] = React.useState<number[]>([0, 5000]);
 
   function handleMinPriceChange(e: React.ChangeEvent<HTMLInputElement>) {
     const v = Number(e.target.value || 0);
@@ -55,7 +56,7 @@ export default function Shop() {
     });
   }
 
-  const filtered = useMemo(() => {
+  const filtered = React.useMemo(() => {
     return ALL_PRODUCTS.filter(p =>
       p.category === category &&
       (material === "Any" || p.material === material) &&
