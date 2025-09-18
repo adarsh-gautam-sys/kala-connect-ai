@@ -10,7 +10,7 @@ type Props = {
 
 export function CtaSection({ t, isLoading, onGetStarted }: Props) {
   return (
-    <section className="py-16 md:py-20 bg-[#f7f7f5]">
+    <section id="cta" className="py-16 md:py-20 bg-[#f7f7f5]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{t.ctaTitle}</h2>

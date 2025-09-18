@@ -1,6 +1,6 @@
 export function BrandStory() {
   return (
-    <section className="py-16 md:py-20 bg-[#f7f3ee]">
+    <section id="brand-story" className="py-16 md:py-20 bg-[#f7f3ee]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <div>

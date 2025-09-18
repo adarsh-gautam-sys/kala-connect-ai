@@ -99,9 +99,18 @@ export default function Dashboard() {
     }
   };
 
+  // Simple DOM scroll helpers for local sections
+  function scrollToSection(id: string) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   // Dummy handlers
-  const handleEdit = () => toast.info(lang === "en" ? "Edit coming soon" : "एडिट जल्द ही");
-  const handleDelete = () => toast.info(lang === "en" ? "Delete coming soon" : "डिलीट जल्द ही");
+  const handleEdit = () => navigate("/upload");
+  const handleDelete = () => {
+    // For now, navigate to dashboard and show info (delete backend not implemented)
+    toast.info(lang === "en" ? "Delete coming soon" : "डिलीट जल्द ही");
+  };
 
   const copy = {
     en: {
@@ -279,24 +288,24 @@ export default function Dashboard() {
         <div className="md:grid md:grid-cols-[220px_1fr]">
           <aside className="hidden md:block border-r dark:border-neutral-800 bg-white dark:bg-neutral-900">
             <nav className="p-4 space-y-1">
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start" onClick={() => scrollToSection("analytics")}>
                 <LayoutDashboard className="h-4 w-4 mr-2" />
                 Dashboard
               </Button>
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start" onClick={() => scrollToSection("crafts")}>
                 <Images className="h-4 w-4 mr-2" />
                 My Crafts
               </Button>
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start" onClick={() => scrollToSection("analytics")}>
                 <BarChart3 className="h-4 w-4 mr-2" />
                 Analytics
               </Button>
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
               </Button>
               <Separator className="my-2" />
-              <Button variant="ghost" className="w-full justify-start text-red-600 hover:text-red-700">
+              <Button variant="ghost" className="w-full justify-start text-red-600 hover:text-red-700" onClick={() => navigate("/auth")}>
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </Button>
@@ -337,7 +346,7 @@ export default function Dashboard() {
             {/* Content */}
             <div className="px-4 sm:px-6 lg:px-8 py-6">
               {/* Analytics Widgets */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+              <div id="analytics" className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 <Card>
                   <CardContent className="p-4">
                     <div className="text-sm text-gray-600 dark:text-gray-300">Total Crafts</div>
@@ -388,160 +397,162 @@ export default function Dashboard() {
               </div>
 
               {/* Crafts List */}
-              {!derivedCrafts || derivedCrafts.length === 0 ? (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-center py-14"
-                >
-                  <img
-                    src="https://cdn-icons-png.flaticon.com/512/10079/10079028.png"
-                    alt="Empty illustration"
-                    className="h-24 w-24 mx-auto mb-4 opacity-80"
-                  />
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    {t.emptyTitle}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-6">
-                    {t.emptyBody}
-                  </p>
-                  <Button
-                    onClick={() => navigate("/upload")}
-                    className="bg-blue-600 hover:bg-blue-700"
+              <div id="crafts">
+                {!derivedCrafts || derivedCrafts.length === 0 ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center py-14"
                   >
-                    <Plus className="h-4 w-4 mr-2" />
-                    {lang === "en" ? "Create Your First Craft" : "अपना पहला शिल्प बनाएं"}
-                  </Button>
-                </motion.div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {derivedCrafts.map((craft, index) => {
-                    // Demo stats & tags
-                    const views = String(craft._id).length * 23;
-                    const likes = Math.max(1, Math.round(views * 0.2));
-                    const clicks = Math.max(1, Math.round(views * 0.1));
-                    const tags = index % 2 === 0 ? ["Art", "Ceramics"] : ["Handmade", "Local"];
+                    <img
+                      src="https://cdn-icons-png.flaticon.com/512/10079/10079028.png"
+                      alt="Empty illustration"
+                      className="h-24 w-24 mx-auto mb-4 opacity-80"
+                    />
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                      {t.emptyTitle}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 mb-6">
+                      {t.emptyBody}
+                    </p>
+                    <Button
+                      onClick={() => navigate("/upload")}
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      {lang === "en" ? "Create Your First Craft" : "अपना पहला शिल्प बनाएं"}
+                    </Button>
+                  </motion.div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {derivedCrafts.map((craft, index) => {
+                      // Demo stats & tags
+                      const views = String(craft._id).length * 23;
+                      const likes = Math.max(1, Math.round(views * 0.2));
+                      const clicks = Math.max(1, Math.round(views * 0.1));
+                      const tags = index % 2 === 0 ? ["Art", "Ceramics"] : ["Handmade", "Local"];
 
-                    return (
-                      <motion.div
-                        key={craft._id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                      >
-                        <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-200">
-                          <CardHeader className="pb-3">
-                            <div className="flex items-center justify-between">
-                              <CardTitle className="text-lg text-gray-900 dark:text-white">
-                                {craft.artisanName}
-                              </CardTitle>
-                              <div className="flex items-center gap-2">
-                                <Badge
-                                  variant={craft.status === "completed" ? "default" : craft.status === "failed" ? "destructive" : "secondary"}
-                                  className={craft.status === "completed" ? "bg-green-600" : ""}
-                                >
-                                  {getStatusText(craft.status)}
-                                </Badge>
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button size="icon" variant="ghost">
-                                      <MoreVertical className="h-4 w-4" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuItem onClick={() => navigate(`/craft/${craft._id}`)}>
-                                      <Eye className="h-4 w-4 mr-2" /> View
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={handleEdit}>
-                                      <Edit className="h-4 w-4 mr-2" /> Edit
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => handleShareCraft(String(craft._id))}>
-                                      <Share2 className="h-4 w-4 mr-2" /> Share
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={handleDelete} className="text-red-600 focus:text-red-700">
-                                      <Trash2 className="h-4 w-4 mr-2" /> Delete
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </div>
-                            </div>
-                            <CardDescription>
-                              {new Date(craft._creationTime).toLocaleDateString(
-                                lang === "en" ? "en-IN" : "hi-IN",
-                              )}
-                            </CardDescription>
-                          </CardHeader>
-
-                          <CardContent>
-                            {craft.craftPhotoUrl && (
-                              <div className="aspect-square rounded-lg overflow-hidden mb-4">
-                                <img
-                                  src={craft.craftPhotoUrl}
-                                  alt="Craft"
-                                  className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
-                                />
-                              </div>
-                            )}
-
-                            {/* Tags */}
-                            <div className="flex flex-wrap gap-2 mb-3">
-                              {tags.map((tag) => (
-                                <Badge key={tag} variant="secondary">{tag}</Badge>
-                              ))}
-                            </div>
-
-                            {/* Small Stats */}
-                            <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300 mb-4">
-                              <div className="flex items-center gap-1">
-                                <Eye className="h-4 w-4" /> {views}
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Heart className="h-4 w-4" /> {likes}
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <BarChart3 className="h-4 w-4" /> {clicks}
-                              </div>
-                            </div>
-
-                            {/* Hover Quick Actions */}
-                            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                              <div className="flex gap-2">
-                                {craft.status === "completed" ? (
-                                  <Button
-                                    onClick={() => navigate(`/craft/${craft._id}`)}
-                                    className="flex-1"
-                                    variant="default"
+                      return (
+                        <motion.div
+                          key={craft._id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                        >
+                          <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-200">
+                            <CardHeader className="pb-3">
+                              <div className="flex items-center justify-between">
+                                <CardTitle className="text-lg text-gray-900 dark:text-white">
+                                  {craft.artisanName}
+                                </CardTitle>
+                                <div className="flex items-center gap-2">
+                                  <Badge
+                                    variant={craft.status === "completed" ? "default" : craft.status === "failed" ? "destructive" : "secondary"}
+                                    className={craft.status === "completed" ? "bg-green-600" : ""}
                                   >
-                                    {t.viewPage}
-                                  </Button>
-                                ) : (
-                                  <Button disabled className="flex-1" variant="outline">
-                                    {craft.status === "processing" ? t.processing : t.waiting}
-                                  </Button>
-                                )}
-                                <Button variant="outline" onClick={() => handleShareCraft(String(craft._id))}>
-                                  <Share2 className="h-4 w-4" />
-                                </Button>
+                                    {getStatusText(craft.status)}
+                                  </Badge>
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button size="icon" variant="ghost">
+                                        <MoreVertical className="h-4 w-4" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                      <DropdownMenuItem onClick={() => navigate(`/craft/${craft._id}`)}>
+                                        <Eye className="h-4 w-4 mr-2" /> View
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem onClick={handleEdit}>
+                                        <Edit className="h-4 w-4 mr-2" /> Edit
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem onClick={() => handleShareCraft(String(craft._id))}>
+                                        <Share2 className="h-4 w-4 mr-2" /> Share
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem onClick={handleDelete} className="text-red-600 focus:text-red-700">
+                                        <Trash2 className="h-4 w-4 mr-2" /> Delete
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </div>
                               </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+                              <CardDescription>
+                                {new Date(craft._creationTime).toLocaleDateString(
+                                  lang === "en" ? "en-IN" : "hi-IN",
+                                )}
+                              </CardDescription>
+                            </CardHeader>
 
-            {/* Floating Action Button */}
-            <Button
-              onClick={() => navigate("/upload")}
-              className="fixed bottom-6 right-6 rounded-full h-12 w-12 p-0 bg-blue-600 hover:bg-blue-700 shadow-lg"
-              aria-label="Create new craft"
-              title="Create new craft"
-            >
-              <Plus className="h-5 w-5" />
-            </Button>
+                            <CardContent>
+                              {craft.craftPhotoUrl && (
+                                <div className="aspect-square rounded-lg overflow-hidden mb-4">
+                                  <img
+                                    src={craft.craftPhotoUrl}
+                                    alt="Craft"
+                                    className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
+                                  />
+                                </div>
+                              )}
+
+                              {/* Tags */}
+                              <div className="flex flex-wrap gap-2 mb-3">
+                                {tags.map((tag) => (
+                                  <Badge key={tag} variant="secondary">{tag}</Badge>
+                                ))}
+                              </div>
+
+                              {/* Small Stats */}
+                              <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300 mb-4">
+                                <div className="flex items-center gap-1">
+                                  <Eye className="h-4 w-4" /> {views}
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Heart className="h-4 w-4" /> {likes}
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <BarChart3 className="h-4 w-4" /> {clicks}
+                                </div>
+                              </div>
+
+                              {/* Hover Quick Actions */}
+                              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <div className="flex gap-2">
+                                  {craft.status === "completed" ? (
+                                    <Button
+                                      onClick={() => navigate(`/craft/${craft._id}`)}
+                                      className="flex-1"
+                                      variant="default"
+                                    >
+                                      {t.viewPage}
+                                    </Button>
+                                  ) : (
+                                    <Button disabled className="flex-1" variant="outline">
+                                      {craft.status === "processing" ? t.processing : t.waiting}
+                                    </Button>
+                                  )}
+                                  <Button variant="outline" onClick={() => handleShareCraft(String(craft._id))}>
+                                    <Share2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Floating Action Button */}
+              <Button
+                onClick={() => navigate("/upload")}
+                className="fixed bottom-6 right-6 rounded-full h-12 w-12 p-0 bg-blue-600 hover:bg-blue-700 shadow-lg"
+                aria-label="Create new craft"
+                title="Create new craft"
+              >
+                <Plus className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>

@@ -46,6 +46,20 @@ function NavbarImpl({
   setLang,
   t,
 }: Props) {
+  const scrollToId = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      // Fallback: ensure we're on home, then attempt after a tick
+      onNavigate("/");
+      setTimeout(() => {
+        const el2 = document.getElementById(id);
+        if (el2) el2.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
+    }
+  };
+
   return (
     <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -65,18 +79,18 @@ function NavbarImpl({
                   <div>
                     <div className="text-xs uppercase text-gray-500 mb-2">Shop</div>
                     <div className="grid gap-2">
-                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/")}>
+                      <Button variant="ghost" className="justify-start" onClick={() => scrollToId("shop")}>
                         Shop All
                       </Button>
-                      <Button variant="ghost" className="justify-start">Categories</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => scrollToId("shop")}>Categories</Button>
                     </div>
                   </div>
 
                   <div>
                     <div className="text-xs uppercase text-gray-500 mb-2">For Artisans</div>
                     <div className="grid gap-2">
-                      <Button variant="ghost" className="justify-start">Join as Artisan</Button>
-                      <Button variant="ghost" className="justify-start">Pricing</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => scrollToId("cta")}>Join as Artisan</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => scrollToId("cta")}>Pricing</Button>
                       <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/dashboard")}>
                         Dashboard
                       </Button>
@@ -86,25 +100,25 @@ function NavbarImpl({
                   <div>
                     <div className="text-xs uppercase text-gray-500 mb-2">Stories</div>
                     <div className="grid gap-2">
-                      <Button variant="ghost" className="justify-start">Featured Artists</Button>
-                      <Button variant="ghost" className="justify-start">Blogs</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => scrollToId("brand-story")}>Featured Artists</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => scrollToId("brand-story")}>Blogs</Button>
                     </div>
                   </div>
 
                   <div>
                     <div className="text-xs uppercase text-gray-500 mb-2">About</div>
                     <div className="grid gap-2">
-                      <Button variant="ghost" className="justify-start">About Us</Button>
-                      <Button variant="ghost" className="justify-start">Mission</Button>
-                      <Button variant="ghost" className="justify-start">Team</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => scrollToId("brand-story")}>About Us</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => scrollToId("brand-story")}>Mission</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => scrollToId("brand-story")}>Team</Button>
                     </div>
                   </div>
 
                   <div>
                     <div className="text-xs uppercase text-gray-500 mb-2">Contact</div>
                     <div className="grid gap-2">
-                      <Button variant="ghost" className="justify-start">Contact Form</Button>
-                      <Button variant="ghost" className="justify-start">FAQs</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => scrollToId("footer")}>Contact Form</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => scrollToId("footer")}>FAQs</Button>
                     </div>
                   </div>
 
@@ -187,8 +201,8 @@ function NavbarImpl({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                <DropdownMenuItem onClick={() => onNavigate("/")}>Shop All</DropdownMenuItem>
-                <DropdownMenuItem>Categories</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => scrollToId("shop")}>Shop All</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => scrollToId("shop")}>Categories</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -203,8 +217,8 @@ function NavbarImpl({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                <DropdownMenuItem>Join as Artisan</DropdownMenuItem>
-                <DropdownMenuItem>Pricing</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => scrollToId("cta")}>Join as Artisan</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => scrollToId("cta")}>Pricing</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onNavigate("/dashboard")}>Dashboard</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -217,8 +231,8 @@ function NavbarImpl({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                <DropdownMenuItem>Featured Artists</DropdownMenuItem>
-                <DropdownMenuItem>Blogs</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => scrollToId("brand-story")}>Featured Artists</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => scrollToId("brand-story")}>Blogs</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -230,9 +244,9 @@ function NavbarImpl({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                <DropdownMenuItem>About Us</DropdownMenuItem>
-                <DropdownMenuItem>Mission</DropdownMenuItem>
-                <DropdownMenuItem>Team</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => scrollToId("brand-story")}>About Us</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => scrollToId("brand-story")}>Mission</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => scrollToId("brand-story")}>Team</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -244,8 +258,8 @@ function NavbarImpl({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                <DropdownMenuItem>Contact Form</DropdownMenuItem>
-                <DropdownMenuItem>FAQs</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => scrollToId("footer")}>Contact Form</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => scrollToId("footer")}>FAQs</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
