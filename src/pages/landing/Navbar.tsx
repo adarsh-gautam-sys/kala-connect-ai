@@ -198,22 +198,6 @@ function NavbarImpl({
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className={`group ${pathname.startsWith("/shop") ? "text-neutral-900 bg-neutral-100" : "text-gray-700"} hover:text-neutral-900`}
-                >
-                  Shop
-                  <ChevronDown className="ml-1 h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem onClick={() => onNavigate("/shop")}>Shop All</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onNavigate("/shop?category=Ceramics")}>Categories</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
                   className={`group ${pathname.startsWith("/dashboard") ? "text-neutral-900 bg-neutral-100" : "text-gray-700"} hover:text-neutral-900`}
                 >
                   For Artisans
