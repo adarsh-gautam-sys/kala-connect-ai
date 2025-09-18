@@ -34,7 +34,12 @@ function initThemeOnce() {
   }
 }
 
-initThemeOnce();
+function ThemeInit() {
+  useEffect(() => {
+    initThemeOnce();
+  }, []);
+  return null;
+}
 
 function RouteSyncer() {
   const location = useLocation();
@@ -78,6 +83,7 @@ createRoot(document.getElementById("root")!).render(
     <InstrumentationProvider>
       <ConvexAuthProvider client={convex}>
         <BrowserRouter>
+          <ThemeInit />
           <RouteSyncer />
           <Routes>
             <Route path="/" element={<Landing />} />
