@@ -28,17 +28,24 @@ const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 function RouteSyncer() {
   const location = useLocation();
   useEffect(() => {
-    window.parent.postMessage(
-      { type: "iframe-route-change", path: location.pathname },
-      "*",
-    );
+    // Defer posting route changes to parent to avoid running during commit
+    const id = setTimeout(() => {
+      window.parent.postMessage(
+        { type: "iframe-route-change", path: location.pathname },
+        "*",
+      );
+    }, 0);
+    return () => clearTimeout(id);
   }, [location.pathname]);
 
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
       if (event.data?.type === "navigate") {
-        if (event.data.direction === "back") window.history.back();
-        if (event.data.direction === "forward") window.history.forward();
+        // Defer navigation to next tick to avoid interfering with React commits
+        setTimeout(() => {
+          if (event.data.direction === "back") window.history.back();
+          if (event.data.direction === "forward") window.history.forward();
+        }, 0);
       }
     }
     window.addEventListener("message", handleMessage);
