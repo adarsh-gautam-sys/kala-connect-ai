@@ -27,7 +27,11 @@ const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
 function RouteSyncer() {
   const location = useLocation();
+  // Only run sync logic in production to avoid dev HMR DOM conflicts
+  const isProd = import.meta.env.PROD;
+
   useEffect(() => {
+    if (!isProd) return;
     // Defer posting route changes to parent to avoid running during commit
     const id = setTimeout(() => {
       window.parent.postMessage(
@@ -36,9 +40,10 @@ function RouteSyncer() {
       );
     }, 0);
     return () => clearTimeout(id);
-  }, [location.pathname]);
+  }, [location.pathname, isProd]);
 
   useEffect(() => {
+    if (!isProd) return;
     function handleMessage(event: MessageEvent) {
       if (event.data?.type === "navigate") {
         // Defer navigation to next tick to avoid interfering with React commits
@@ -48,9 +53,9 @@ function RouteSyncer() {
         }, 0);
       }
     }
-    window.addEventListener("message", handleMessage);
+    window.addEventListener("message", handleMessage, { passive: true });
     return () => window.removeEventListener("message", handleMessage);
-  }, []);
+  }, [isProd]);
 
   return null;
 }
