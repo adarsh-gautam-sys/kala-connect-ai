@@ -17,8 +17,6 @@ import {
 } from "@/components/ui/sheet";
 import {
   Menu,
-  Bell,
-  ShoppingCart,
   ChevronDown,
   User as UserIcon,
   Settings as SettingsIcon,
@@ -105,7 +103,6 @@ function NavbarImpl({
                     <div className="text-xs uppercase text-gray-500 mb-2">Stories</div>
                     <div className="grid gap-2">
                       <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/stories")}>Featured Artists</Button>
-                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/stories")}>Blogs</Button>
                     </div>
                   </div>
 
@@ -113,7 +110,6 @@ function NavbarImpl({
                     <div className="text-xs uppercase text-gray-500 mb-2">About</div>
                     <div className="grid gap-2">
                       <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/about")}>About Us</Button>
-                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/about")}>Mission</Button>
                       <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/team")}>Team</Button>
                     </div>
                   </div>
@@ -122,7 +118,6 @@ function NavbarImpl({
                     <div className="text-xs uppercase text-gray-500 mb-2">Contact</div>
                     <div className="grid gap-2">
                       <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/contact")}>Contact Form</Button>
-                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/contact")}>FAQs</Button>
                     </div>
                   </div>
 
@@ -221,7 +216,6 @@ function NavbarImpl({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
                 <DropdownMenuItem onClick={() => onNavigate("/stories")}>Featured Artists</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onNavigate("/stories")}>Blogs</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -234,7 +228,6 @@ function NavbarImpl({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
                 <DropdownMenuItem onClick={() => onNavigate("/about")}>About Us</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onNavigate("/about")}>Mission</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onNavigate("/team")}>Team</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -248,19 +241,11 @@ function NavbarImpl({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
                 <DropdownMenuItem onClick={() => onNavigate("/contact")}>Contact Form</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onNavigate("/contact")}>FAQs</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2">
-            <Button variant="ghost" size="icon" aria-label="Cart" title="Cart">
-              <ShoppingCart className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" aria-label="Notifications" title="Notifications">
-              <Bell className="h-5 w-5" />
-            </Button>
-
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="hidden sm:inline-flex">
