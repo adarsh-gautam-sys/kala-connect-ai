@@ -7,7 +7,7 @@ import Upload from "@/pages/Upload.tsx";
 import CraftPage from "@/pages/CraftPage.tsx";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
-import { StrictMode, useEffect } from "react";
+import { StrictMode, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router";
 import "./index.css";
@@ -46,8 +46,16 @@ function RouteSyncer() {
   // Only run sync logic in production to avoid dev HMR DOM conflicts
   const isProd = import.meta.env.PROD;
 
+  // Add: suppress broadcasting right after we handle an inbound navigation message
+  const suppressRef = useRef(false);
+
   useEffect(() => {
     if (!isProd) return;
+    // If we navigated due to a parent message, skip this broadcast once
+    if (suppressRef.current) {
+      suppressRef.current = false;
+      return;
+    }
     // Defer posting route changes to parent to avoid running during commit
     const id = setTimeout(() => {
       window.parent.postMessage(
@@ -64,6 +72,8 @@ function RouteSyncer() {
       if (event.data?.type === "navigate") {
         // Defer navigation to next tick to avoid interfering with React commits
         setTimeout(() => {
+          // Prevent re-broadcast for the following effect tick
+          suppressRef.current = true;
           if (event.data.direction === "back") window.history.back();
           if (event.data.direction === "forward") window.history.forward();
         }, 0);
