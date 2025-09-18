@@ -4,7 +4,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 
@@ -40,6 +39,23 @@ export default function Shop() {
   const [material, setMaterial] = useState<(typeof MATERIALS)[number]>("Any");
   const [artisan, setArtisan] = useState("");
   const [priceRange, setPriceRange] = useState<number[]>([0, 5000]);
+
+  function handleMinPriceChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const v = Number(e.target.value || 0);
+    setPriceRange((prev) => {
+      const next = [Math.max(0, Math.min(v, 5000)), prev[1]];
+      if (next[0] > next[1]) next[1] = next[0];
+      return next;
+    });
+  }
+  function handleMaxPriceChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const v = Number(e.target.value || 0);
+    setPriceRange((prev) => {
+      const next = [prev[0], Math.max(0, Math.min(v, 5000))];
+      if (next[1] < next[0]) next[0] = next[1];
+      return next;
+    });
+  }
 
   const filtered = useMemo(() => {
     return ALL_PRODUCTS.filter(p =>
@@ -77,7 +93,29 @@ export default function Shop() {
         <aside className="space-y-6">
           <div>
             <div className="font-semibold mb-2">Price (₹)</div>
-            <Slider value={priceRange} onValueChange={setPriceRange} min={0} max={5000} step={100} />
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                inputMode="numeric"
+                min={0}
+                max={5000}
+                step={100}
+                value={priceRange[0]}
+                onChange={handleMinPriceChange}
+                aria-label="Minimum price"
+              />
+              <span className="text-neutral-600">to</span>
+              <Input
+                type="number"
+                inputMode="numeric"
+                min={0}
+                max={5000}
+                step={100}
+                value={priceRange[1]}
+                onChange={handleMaxPriceChange}
+                aria-label="Maximum price"
+              />
+            </div>
             <div className="text-sm text-neutral-600 mt-1">₹{priceRange[0]} - ₹{priceRange[1]}</div>
           </div>
 
