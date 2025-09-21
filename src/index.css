@@ -124,3 +124,16 @@
     cursor: pointer;
   }
 }
+
+/* Featured marquee animation */
+@keyframes featured-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Utility class for the featured crafts carousel */
+.featured-marquee {
+  animation: featured-marquee 60s linear infinite;
+  will-change: transform;
+}

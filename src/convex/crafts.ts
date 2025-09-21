@@ -222,3 +222,38 @@ export const getByRegion = query({
     return craftsWithUrls;
   },
 });
+
+// Get public featured crafts (latest completed), up to 12
+export const getFeaturedPublic = query({
+  args: {},
+  handler: async (ctx) => {
+    const q = ctx.db
+      .query("crafts")
+      .withIndex("by_status", (iq) => iq.eq("status", "completed"))
+      .order("desc");
+
+    // Prefer take(12) if available; otherwise collect and slice.
+    // Using for-await to avoid loading too much:
+    const results: any[] = [];
+    for await (const row of q) {
+      results.push(row);
+      if (results.length >= 12) break;
+    }
+
+    const mapped = await Promise.all(
+      results.map(async (craft) => {
+        const primaryId = craft.enhancedPhoto ?? craft.craftPhoto;
+        const imageUrl = primaryId ? await ctx.storage.getUrl(primaryId) : null;
+        return {
+          ...craft,
+          imageUrl,
+          productName: craft.aiTags?.[0] ? craft.aiTags[0].toString() : "Handcrafted Piece",
+          // price is optional in current schema—left null for now; UI handles fallback
+          price: null as number | null,
+        };
+      })
+    );
+
+    return mapped;
+  },
+});
