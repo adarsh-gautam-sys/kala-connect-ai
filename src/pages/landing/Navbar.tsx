@@ -195,11 +195,9 @@ function NavbarImpl({
             </Sheet>
 
             <img
-              src="/logo.svg"
+              src="https://harmless-tapir-303.convex.cloud/api/storage/7ee63668-6e97-4a67-8eac-1ace3a277f56"
               alt={`${t.brand} Logo`}
-              width={40}
-              height={40}
-              className="rounded-lg cursor-pointer"
+              className="h-9 w-9 sm:h-10 sm:w-10 object-contain cursor-pointer"
               onClick={() => onNavigate("/")}
             />
             <span
