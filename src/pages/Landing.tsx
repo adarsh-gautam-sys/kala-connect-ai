@@ -43,7 +43,7 @@ import {
 } from "lucide-react";
 import { Navbar } from "./landing/Navbar";
 import { Hero } from "./landing/Hero";
-import { Featured } from "./landing/Featured";
+import FeaturedCraftsCarousel from "@/components/FeaturedCraftsCarousel";
 import { ValueProps } from "./landing/ValueProps";
 import { BrandStory } from "./landing/BrandStory";
 import { HowItWorks } from "./landing/HowItWorks";
@@ -201,58 +201,6 @@ export default function Landing() {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  // Add: Demo products for the shop section (for demonstration purposes)
-  const demoProducts = [
-    {
-      id: "d1",
-      title: "Terracotta Vase",
-      price: "₹1,499",
-      image:
-        "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=800&auto=format&fit=crop",
-      blurb: "Handcrafted terracotta vase with natural glaze.",
-    },
-    {
-      id: "d2",
-      title: "Earthy Clay Cup Set",
-      price: "₹899",
-      image:
-        "https://images.unsplash.com/photo-1519677100203-a0e668c92439?q=80&w=800&auto=format&fit=crop",
-      blurb: "Set of 2 cups — perfect for chai or coffee.",
-    },
-    {
-      id: "d3",
-      title: "Wheel-thrown Bowl",
-      price: "₹1,199",
-      image:
-        "https://images.unsplash.com/photo-1523419409543-05aece9b77be?q=80&w=800&auto=format&fit=crop",
-      blurb: "Minimal bowl with a warm, matte finish.",
-    },
-    {
-      id: "d4",
-      title: "Clay Planter",
-      price: "₹1,299",
-      image:
-        "https://images.unsplash.com/photo-1616499615995-11b8199e80a6?q=80&w=800&auto=format&fit=crop",
-      blurb: "Breathable clay pot for indoor greens.",
-    },
-    {
-      id: "d5",
-      title: "Serving Plate",
-      price: "₹1,099",
-      image:
-        "https://images.unsplash.com/photo-1508161250369-0c3b3e8a04a5?q=80&w=800&auto=format&fit=crop",
-      blurb: "Elegant plate with subtle rim detail.",
-    },
-    {
-      id: "d6",
-      title: "Decorative Jar",
-      price: "₹1,799",
-      image:
-        "https://images.unsplash.com/photo-1566837945700-30057527ade0?q=80&w=800&auto=format&fit=crop",
-      blurb: "Statement piece for living spaces.",
-    },
-  ] as const;
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -275,7 +223,7 @@ export default function Landing() {
       <Hero onShopNow={scrollToShop} onGetStarted={handleGetStarted} />
 
       {/* Featured */}
-      <Featured demos={demoProducts} lang={lang} onGetStarted={handleGetStarted} />
+      <FeaturedCraftsCarousel />
 
       {/* Value Props */}
       <ValueProps />
