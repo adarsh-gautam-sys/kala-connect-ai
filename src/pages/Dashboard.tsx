@@ -61,6 +61,13 @@ export default function Dashboard() {
     else root.classList.remove("dark");
   }, [theme]);
 
+  // Redirect unauthenticated users via effect (avoid navigating during render)
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/auth");
+    }
+  }, [authLoading, user, navigate]);
+
   // Search + Sort state
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "mostViewed">("newest");
@@ -162,9 +169,13 @@ export default function Dashboard() {
     );
   }
 
+  // Replace navigate during render with a passive loading UI while useEffect redirects
   if (!user) {
-    navigate("/auth");
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
   }
 
   const getStatusIcon = (status: string) => {
