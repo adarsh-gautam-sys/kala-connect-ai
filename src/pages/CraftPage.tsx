@@ -21,6 +21,7 @@ import { useParams, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function CraftPage() {
   const { id } = useParams<{ id: string }>();
@@ -160,6 +161,25 @@ export default function CraftPage() {
     );
   }
 
+  // Add: simple gallery state with fallbacks
+  const images: Array<{ src: string; label: string }> = [];
+  if (craft.enhancedPhotoUrl) images.push({ src: craft.enhancedPhotoUrl, label: lang === "en" ? "Enhanced" : "एन्हांस्ड" });
+  if (craft.craftPhotoUrl) images.push({ src: craft.craftPhotoUrl, label: lang === "en" ? "Original" : "मूल" });
+
+  const [activeIdx, setActiveIdx] = useState<number>(0);
+
+  // Demo price + buy handler (routes to WhatsApp)
+  const demoPrice = Math.max(499, (String(craft._id).length * 137) % 4999);
+  const handleBuyNow = () => handleWhatsAppContact();
+
+  // Craft journey steps (status-aware)
+  const steps = [
+    { key: "uploaded", label: lang === "en" ? "Uploaded" : "अपलोड किया", done: true },
+    { key: "processing", label: lang === "en" ? "AI Processing" : "AI प्रोसेसिंग", done: craft.status === "processing" || craft.status === "completed" || craft.status === "failed" },
+    { key: "ready", label: lang === "en" ? "Ready" : "तैयार", done: craft.status === "completed" },
+    { key: "share", label: lang === "en" ? "Shared" : "शेयर किया", done: craft.status === "completed" }, // heuristic
+  ] as const;
+
   const handleWhatsAppContact = () => {
     if (craft.whatsappNumber) {
       const message = encodeURIComponent(t.whatsappMsg(craft.artisanName));
@@ -236,10 +256,19 @@ export default function CraftPage() {
                 <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                   {t.craftOf(craft.artisanName)}
                   {isVerified && (
-                    <span className="inline-flex items-center gap-1 text-green-600 text-xs font-medium">
-                      <BadgeCheck className="h-4 w-4" />
-                      {lang === "en" ? "Verified Artisan" : "सत्यापित कलाकार"}
-                    </span>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="inline-flex items-center gap-1 text-green-600 text-xs font-medium cursor-help">
+                            <BadgeCheck className="h-4 w-4" />
+                            {lang === "en" ? "Verified Artisan" : "सत्यापित कलाकार"}
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {lang === "en" ? "Verified Artisan" : "सत्यापित कलाकार"}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   )}
                 </h1>
                 {getStatusBadge()}
@@ -282,17 +311,23 @@ export default function CraftPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column - Images */}
           <div className="space-y-6">
-            {/* Main Image */}
+            {/* Main Image with zoom and slide transition */}
             <Card>
               <CardContent className="p-0">
-                <div className="aspect-square rounded-lg overflow-hidden">
-                  <img
-                    src={craft.enhancedPhotoUrl ?? craft.craftPhotoUrl ?? undefined}
+                <div className="relative aspect-square rounded-lg overflow-hidden group bg-black/5">
+                  {/* slide transition using framer-motion */}
+                  <motion.img
+                    key={images[activeIdx]?.src || craft.enhancedPhotoUrl || craft.craftPhotoUrl || "single"}
+                    src={(images[activeIdx]?.src) ?? (craft.enhancedPhotoUrl ?? craft.craftPhotoUrl ?? undefined)}
                     alt="Craft"
-                    className="w-full h-full object-cover"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="w-full h-full object-cover transform-gpu transition duration-300 group-hover:scale-[1.03]"
                   />
                 </div>
-                {craft.enhancedPhotoUrl && (
+                {/* Enhanced note if applicable */}
+                {craft.enhancedPhotoUrl && activeIdx === 0 && (
                   <div className="p-4 bg-blue-50 border-t">
                     <p className="text-sm text-blue-700 flex items-center">
                       <ExternalLink className="h-4 w-4 mr-2" />
@@ -303,37 +338,48 @@ export default function CraftPage() {
               </CardContent>
             </Card>
 
-            {/* Original Photo (if enhanced exists) */}
-            {craft.enhancedPhotoUrl && (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">मूल फोटो</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="aspect-square rounded-lg overflow-hidden">
-                    <img
-                      src={craft.craftPhotoUrl ?? undefined}
-                      alt="Original Craft"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
+            {/* Thumbnails */}
+            {images.length > 1 && (
+              <div className="flex gap-3">
+                {images.map((img, idx) => (
+                  <button
+                    key={img.src}
+                    onClick={() => setActiveIdx(idx)}
+                    className={`relative w-20 h-20 rounded-md overflow-hidden border transition-all ${
+                      activeIdx === idx ? "border-blue-600 ring-2 ring-blue-200" : "border-gray-200 hover:border-gray-300"
+                    }`}
+                    title={img.label}
+                  >
+                    <img src={img.src} alt={img.label} className="w-full h-full object-cover" />
+                    <span className="absolute bottom-0 inset-x-0 text-[10px] text-white/90 bg-black/40 px-1 py-0.5 text-center">
+                      {img.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 
           {/* Right Column - Details */}
           <div className="space-y-6">
-            {/* Product Description */}
+            {/* Product Description + Price + Buy */}
             <Card>
               <CardHeader>
-                <CardTitle>{t.description}</CardTitle>
-                <CardDescription>
-                  <Clock className="h-4 w-4 inline mr-1" />
-                  {new Date(craft._creationTime).toLocaleDateString(t.dateLocale)}
-                </CardDescription>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <CardTitle>{t.description}</CardTitle>
+                    <CardDescription>
+                      <Clock className="h-4 w-4 inline mr-1" />
+                      {new Date(craft._creationTime).toLocaleDateString(t.dateLocale)}
+                    </CardDescription>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs text-gray-500">{lang === "en" ? "Price" : "कीमत"}</div>
+                    <div className="text-2xl font-bold">₹{demoPrice}</div>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 {craft.status === "completed" && craft.productDescription ? (
                   <p className="text-gray-700 leading-relaxed">{craft.productDescription}</p>
                 ) : craft.status === "processing" ? (
@@ -344,6 +390,15 @@ export default function CraftPage() {
                 ) : (
                   <p className="text-gray-500">{t.notAvailable}</p>
                 )}
+
+                {/* Buy Now with subtle ripple-style hover */}
+                <Button
+                  onClick={handleBuyNow}
+                  className="relative overflow-hidden w-full bg-blue-600 hover:bg-blue-700"
+                  size="lg"
+                >
+                  {lang === "en" ? "Buy Now" : "अभी खरीदें"}
+                </Button>
               </CardContent>
             </Card>
 
@@ -420,6 +475,45 @@ export default function CraftPage() {
                 </CardContent>
               </Card>
             )}
+
+            {/* Craft Journey Timeline */}
+            <Card>
+              <CardHeader>
+                <CardTitle>{lang === "en" ? "Craft Journey" : "शिल्प यात्रा"}</CardTitle>
+                <CardDescription>{lang === "en" ? "From upload to sharing" : "अपलोड से शेयर तक"}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="relative pl-4">
+                  <div className="absolute left-1 top-1 bottom-1 w-0.5 bg-gray-200" />
+                  <div className="space-y-4">
+                    {steps.map((s, i) => (
+                      <motion.div
+                        key={s.key}
+                        initial={{ opacity: 0, y: 12 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{ delay: i * 0.06 }}
+                        className="relative"
+                      >
+                        <div
+                          className={`absolute -left-[14px] top-[2px] h-3.5 w-3.5 rounded-full border ${
+                            s.done ? "bg-green-600 border-green-700" : "bg-white border-gray-300"
+                          }`}
+                        />
+                        <div className="ml-2">
+                          <div className={`font-medium ${s.done ? "text-gray-900" : "text-gray-600"}`}>{s.label}</div>
+                          <div className="text-xs text-gray-500">
+                            {s.done
+                              ? lang === "en" ? "Completed" : "पूर्ण"
+                              : lang === "en" ? "Pending" : "लंबित"}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
@@ -455,6 +549,18 @@ export default function CraftPage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Floating Chat with Artisan AI FAB */}
+      <motion.button
+        onClick={() => navigate("/contact")}
+        whileHover={{ y: -3 }}
+        whileTap={{ scale: 0.98 }}
+        className="fixed bottom-6 right-6 rounded-full h-12 px-5 shadow-lg bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2"
+        aria-label={lang === "en" ? "Chat with Artisan AI" : "कलाकार AI से बात करें"}
+        title={lang === "en" ? "Chat with Artisan AI" : "कलाकार AI से बात करें"}
+      >
+        🤖 {lang === "en" ? "Ask Artisan AI" : "कलाकार AI"}
+      </motion.button>
     </motion.div>
   );
 }

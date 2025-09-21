@@ -138,3 +138,47 @@
   animation: featured-marquee 40s linear infinite;
   will-change: transform;
 }
+
+/* Navbar underline animation */
+.nav-underline {
+  position: relative;
+}
+.nav-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(90deg, oklch(0.74 0.12 40) 0%, oklch(0.7 0.08 30) 100%);
+  transition: width 200ms ease;
+  border-radius: 9999px;
+}
+.nav-underline:hover::after {
+  width: 100%;
+}
+
+/* Brand soft accent underline */
+.brand-accent {
+  position: relative;
+}
+.brand-accent::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 4px;
+  width: 36%;
+  background: linear-gradient(90deg, oklch(0.86 0.05 40) 0%, oklch(0.8 0.04 30) 100%);
+  border-radius: 9999px;
+  opacity: 0.6;
+}
+
+/* Optional subtle hover glow helper */
+.hover-glow {
+  transition: box-shadow 150ms ease, transform 150ms ease;
+}
+.hover-glow:hover {
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 40%, transparent);
+  transform: translateY(-0.5px);
+}

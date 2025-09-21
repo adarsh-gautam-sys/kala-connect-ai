@@ -99,6 +99,11 @@ export default function Dashboard() {
   const totalViews = derivedCrafts.reduce((acc, c) => acc + String(c._id).length * 23, 0);
   const engagementRate = totalCrafts > 0 ? Math.min(100, Math.round((totalViews / (totalCrafts * 500)) * 100)) : 0;
 
+  // Add: demo metrics for gradient header cards (sales, tips, views, followers)
+  const demoSales = Math.max(1, Math.round(totalViews * 0.12)); // heuristic demo
+  const demoTips = Math.max(1, Math.round(totalViews * 0.05));
+  const demoFollowers = Math.max(50, totalCrafts * 7 + 42);
+
   // Share helper
   const handleShareCraft = async (id: string) => {
     const url = `${window.location.origin}/craft/${id}`;
@@ -376,23 +381,29 @@ export default function Dashboard() {
             {/* Content */}
             <div className="px-4 sm:px-6 lg:px-8 py-6">
               {/* Analytics Widgets */}
-              <div id="analytics" className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                <Card>
+              <div id="analytics" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <Card className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white transition-transform hover:scale-[1.01] hover:shadow-lg">
                   <CardContent className="p-4">
-                    <div className="text-sm text-gray-600 dark:text-gray-300">Total Crafts</div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">{totalCrafts}</div>
+                    <div className="text-sm/none opacity-90">Total Sales</div>
+                    <div className="text-3xl font-bold">{demoSales}</div>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="bg-gradient-to-br from-pink-500 to-rose-600 text-white transition-transform hover:scale-[1.01] hover:shadow-lg">
                   <CardContent className="p-4">
-                    <div className="text-sm text-gray-600 dark:text-gray-300">Total Views</div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">{totalViews}</div>
+                    <div className="text-sm/none opacity-90">Total Tips</div>
+                    <div className="text-3xl font-bold">{demoTips}</div>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white transition-transform hover:scale-[1.01] hover:shadow-lg">
                   <CardContent className="p-4">
-                    <div className="text-sm text-gray-600 dark:text-gray-300">Engagement Rate</div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">{engagementRate}%</div>
+                    <div className="text-sm/none opacity-90">Product Views</div>
+                    <div className="text-3xl font-bold">{totalViews}</div>
+                  </CardContent>
+                </Card>
+                <Card className="bg-gradient-to-br from-amber-500 to-orange-600 text-white transition-transform hover:scale-[1.01] hover:shadow-lg">
+                  <CardContent className="p-4">
+                    <div className="text-sm/none opacity-90">Followers</div>
+                    <div className="text-3xl font-bold">{demoFollowers}</div>
                   </CardContent>
                 </Card>
               </div>

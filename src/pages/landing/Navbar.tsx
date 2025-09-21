@@ -24,6 +24,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 type Props = {
   brand: string;
@@ -66,6 +67,15 @@ function NavbarImpl({
   const { items, count, total, remove, clear, updateQty } = useCart();
   const [cartOpen, setCartOpen] = React.useState(false);
 
+  // Add: sticky shadow on scroll
+  const [scrolled, setScrolled] = React.useState(false);
+  React.useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 4);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   // Add theme toggle (persisted)
   const [theme, setTheme] = React.useState<"light" | "dark">(() => {
     try {
@@ -89,8 +99,38 @@ function NavbarImpl({
   // Add: auth actions for real sign-out
   const { signOut } = useAuth();
 
+  // Add: active link helper (routes only)
+  const isActive = (target: string) => pathname.startsWith(target);
+
+  // Add: small Nav button helper
+  const NavBtn = ({
+    label,
+    onClick,
+    active,
+  }: {
+    label: string;
+    onClick: () => void;
+    active?: boolean;
+  }) => (
+    <Button
+      variant="ghost"
+      className={
+        active
+          ? "rounded-full bg-neutral-100 dark:bg-white/10 text-neutral-900 dark:text-white px-3"
+          : "text-gray-700 dark:text-neutral-200 hover:text-neutral-900 dark:hover:text-white px-3 nav-underline"
+      }
+      onClick={onClick}
+    >
+      {label}
+    </Button>
+  );
+
   return (
-    <nav className="sticky top-0 z-50 bg-white/90 dark:bg-neutral-900/80 backdrop-blur border-b dark:border-white/10 shadow-sm">
+    <nav
+      className={`sticky top-0 z-50 backdrop-blur border-b dark:border-white/10 transition-shadow ${
+        scrolled ? "shadow-md bg-white/95 dark:bg-neutral-900/85" : "bg-white/90 dark:bg-neutral-900/80 shadow-sm"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-3">
           <div className="flex items-center gap-3">
@@ -212,55 +252,36 @@ function NavbarImpl({
               </SheetContent>
             </Sheet>
 
+            {/* Logo - slightly larger with gentle scale hover */}
             <img
               src="https://harmless-tapir-303.convex.cloud/api/storage/7ee63668-6e97-4a67-8eac-1ace3a277f56"
               alt={`${t.brand} Logo`}
-              className="h-9 w-9 sm:h-10 sm:w-10 object-contain cursor-pointer"
+              className="h-11 w-11 sm:h-12 sm:w-12 object-contain cursor-pointer transition-transform duration-200 hover:scale-[1.04]"
               onClick={() => onNavigate("/")}
             />
             <span
-              className="text-2xl font-bold tracking-tight cursor-pointer hidden sm:inline"
+              className="text-2xl font-bold tracking-tight cursor-pointer hidden sm:inline brand-accent"
               onClick={() => onNavigate("/")}
             >
               {t.brand}
             </span>
           </div>
 
+          {/* Desktop nav links with animated underline and active pill */}
           <div className="hidden md:flex items-center gap-2 lg:gap-4">
-            <Button
-              variant="ghost"
-              className={`${pathname.startsWith("/dashboard") ? "text-neutral-900 bg-neutral-100 dark:text-white dark:bg-white/10" : "text-gray-700 dark:text-neutral-200"} hover:text-neutral-900 dark:hover:text-white`}
-              onClick={() => scrollToId("how-it-works")}
-            >
-              {t.forArtisans}
-            </Button>
-            <Button
-              variant="ghost"
-              className="text-gray-700 dark:text-neutral-200 hover:text-neutral-900 dark:hover:text-white"
-              onClick={() => onNavigate("/stories")}
-            >
-              {t.stories}
-            </Button>
-            <Button
-              variant="ghost"
-              className="text-gray-700 dark:text-neutral-200 hover:text-neutral-900 dark:hover:text-white"
-              onClick={() => onNavigate("/about")}
-            >
-              {t.about}
-            </Button>
-            <Button
-              variant="ghost"
-              className="text-gray-700 dark:text-neutral-200 hover:text-neutral-900 dark:hover:text-white"
-              onClick={() => onNavigate("/contact")}
-            >
-              {t.contact}
-            </Button>
+            <NavBtn label={t.forArtisans} onClick={() => scrollToId("how-it-works")} />
+            <NavBtn label={t.stories} onClick={() => onNavigate("/stories")} active={isActive("/stories")} />
+            <NavBtn label={t.about} onClick={() => onNavigate("/about")} active={isActive("/about")} />
+            <NavBtn label={t.contact} onClick={() => onNavigate("/contact")} active={isActive("/contact")} />
+            <NavBtn label={t.shopAll} onClick={() => onNavigate("/shop")} active={isActive("/shop")} />
           </div>
 
+          {/* Utilities */}
           <div className="flex items-center gap-1 sm:gap-2">
+            {/* Language */}
             <Button
               variant="outline"
-              className="hidden sm:inline-flex"
+              className="hidden sm:inline-flex rounded-full hover:shadow-sm hover:translate-y-[-1px] transition"
               onClick={() => setLang(lang === "en" ? "hi" : "en")}
               aria-label="Toggle language"
               title="Toggle language"
@@ -269,16 +290,10 @@ function NavbarImpl({
               {lang === "en" ? "EN" : "HI"}
             </Button>
 
-            <Button
-              onClick={() => onNavigate("/shop")}
-              variant="ghost"
-              className="hidden md:inline-flex"
-            >
-              {t.shopAll}
-            </Button>
-
+            {/* Theme */}
             <Button
               variant="outline"
+              className="rounded-full hover:shadow-sm hover:translate-y-[-1px] transition"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               aria-label="Toggle theme"
               title="Toggle theme"
@@ -286,12 +301,13 @@ function NavbarImpl({
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
 
+            {/* Cart */}
             <Sheet open={cartOpen} onOpenChange={setCartOpen}>
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="relative sm:hidden"
+                  className="relative sm:hidden rounded-full hover:shadow-sm hover:translate-y-[-1px] transition"
                   aria-label="Open cart"
                   title="Open cart"
                 >
@@ -307,7 +323,7 @@ function NavbarImpl({
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
-                  className="hidden sm:inline-flex items-center gap-2"
+                  className="hidden sm:inline-flex items-center gap-2 rounded-full hover:shadow-sm hover:translate-y-[-1px] transition"
                   aria-label="Open cart"
                   title="Open cart"
                 >
@@ -375,48 +391,65 @@ function NavbarImpl({
               </SheetContent>
             </Sheet>
 
+            {/* Auth actions */}
             {isAuthenticated ? (
               <div className="flex items-center gap-1 sm:gap-2">
                 <Button
                   onClick={() => onNavigate("/dashboard")}
-                  className="hidden sm:inline-flex bg-neutral-900 hover:bg-neutral-800 text-white"
+                  className={`hidden sm:inline-flex rounded-full transition ${
+                    isActive("/dashboard")
+                      ? "bg-neutral-900 hover:bg-neutral-800 text-white"
+                      : "bg-neutral-100 hover:bg-neutral-200 dark:bg-white/10 dark:hover:bg-white/15 text-neutral-900 dark:text-white"
+                  }`}
                 >
                   Dashboard
                 </Button>
-                <Button
-                  variant="ghost"
-                  className="p-0 h-9 w-9 rounded-full"
-                  onClick={() => onNavigate("/dashboard")}
-                  aria-label="Profile"
-                  title="Profile"
-                >
-                  <Avatar className="h-9 w-9">
-                    <AvatarFallback className="bg-neutral-200 text-neutral-700">
-                      KC
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={async () => {
-                    try {
-                      await signOut();
-                      onNavigate("/");
-                    } catch (e) {
-                      console.error("Sign out failed", e);
-                    }
-                  }}
-                >
-                  Logout
-                </Button>
+
+                {/* Profile dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="p-0 h-9 w-9 rounded-full hover:shadow-sm hover:translate-y-[-1px] transition"
+                      aria-label="Profile"
+                      title="Profile"
+                    >
+                      <Avatar className="h-9 w-9">
+                        <AvatarFallback className="bg-neutral-200 text-neutral-700">
+                          KC
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-44">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => onNavigate("/dashboard")}>Profile</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onNavigate("/auth")}>Settings</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-red-600 focus:text-red-700"
+                      onClick={async () => {
+                        try {
+                          await signOut();
+                          onNavigate("/");
+                        } catch (e) {
+                          console.error("Sign out failed", e);
+                        }
+                      }}
+                    >
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             ) : (
               <div className="hidden sm:flex items-center gap-2">
-                <Button variant="ghost" onClick={() => onNavigate("/auth")}>
+                <Button variant="ghost" className="nav-underline" onClick={() => onNavigate("/auth")}>
                   Sign In
                 </Button>
                 <Button
-                  className="bg-neutral-900 hover:bg-neutral-800 text-white"
+                  className="rounded-full bg-neutral-900 hover:bg-neutral-800 text-white transition"
                   onClick={() => onNavigate("/auth")}
                 >
                   Sign Up
