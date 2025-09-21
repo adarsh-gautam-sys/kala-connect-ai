@@ -1,6 +1,4 @@
 import React from "react";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 
 type FeaturedItem = {
   _id: string;
@@ -11,29 +9,109 @@ type FeaturedItem = {
 };
 
 export default function FeaturedCraftsCarousel() {
-  const items = useQuery(api.crafts.getFeaturedPublic) as FeaturedItem[] | undefined;
+  // Add: curated examples (replaces current products)
+  const examples: FeaturedItem[] = [
+    {
+      _id: "ex-1",
+      imageUrl:
+        "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=800&auto=format&fit=crop",
+      productName: "Terracotta Vase",
+      artisanName: "Asha Verma",
+      price: 1499,
+    },
+    {
+      _id: "ex-2",
+      imageUrl:
+        "https://images.unsplash.com/photo-1523419409543-05aece9b77be?q=80&w=800&auto=format&fit=crop",
+      productName: "Handcrafted Bowl",
+      artisanName: "Ravi Kumar",
+      price: 899,
+    },
+    {
+      _id: "ex-3",
+      imageUrl:
+        "https://images.unsplash.com/photo-1566837945700-30057527ade0?q=80&w=800&auto=format&fit=crop",
+      productName: "Clay Planter",
+      artisanName: "Meera Singh",
+      price: 1299,
+    },
+    {
+      _id: "ex-4",
+      imageUrl:
+        "https://images.unsplash.com/photo-1543599538-a6c4d7f9a63c?q=80&w=800&auto=format&fit=crop",
+      productName: "Glazed Pitcher",
+      artisanName: "Irfan Ali",
+      price: 1799,
+    },
+    {
+      _id: "ex-5",
+      imageUrl:
+        "https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?q=80&w=800&auto=format&fit=crop",
+      productName: "Artisan Mug",
+      artisanName: "Sita Devi",
+      price: 499,
+    },
+    {
+      _id: "ex-6",
+      imageUrl:
+        "https://images.unsplash.com/photo-1549049950-48d5887197a1?q=80&w=800&auto=format&fit=crop",
+      productName: "Decorative Plate",
+      artisanName: "Nikhil Patil",
+      price: 1199,
+    },
+    {
+      _id: "ex-7",
+      imageUrl:
+        "https://images.unsplash.com/photo-1585384428579-2edcdd2bc89b?q=80&w=800&auto=format&fit=crop",
+      productName: "Mini Planter Set",
+      artisanName: "Rina Joshi",
+      price: 999,
+    },
+    {
+      _id: "ex-8",
+      imageUrl:
+        "https://images.unsplash.com/photo-1609951651576-cdc04f484332?q=80&w=800&auto=format&fit=crop",
+      productName: "Studio Bowl",
+      artisanName: "Vijay Sharma",
+      price: 1099,
+    },
+    {
+      _id: "ex-9",
+      imageUrl:
+        "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=800&auto=format&fit=crop",
+      productName: "Sculpted Cup",
+      artisanName: "Leela Rao",
+      price: 699,
+    },
+    {
+      _id: "ex-10",
+      imageUrl:
+        "https://images.unsplash.com/photo-1591195853828-11db59f5d2ca?q=80&w=800&auto=format&fit=crop",
+      productName: "Textured Vase",
+      artisanName: "Arun Das",
+      price: 1599,
+    },
+    {
+      _id: "ex-11",
+      imageUrl:
+        "https://images.unsplash.com/photo-1518134346374-184f7cc09f5c?q=80&w=800&auto=format&fit=crop",
+      productName: "Stoneware Jar",
+      artisanName: "Pooja Nair",
+      price: 1399,
+    },
+    {
+      _id: "ex-12",
+      imageUrl:
+        "https://images.unsplash.com/photo-1556910633-5099dc3971b3?q=80&w=800&auto=format&fit=crop",
+      productName: "Serving Dish",
+      artisanName: "Dev Patel",
+      price: 1699,
+    },
+  ];
 
-  const list = React.useMemo<FeaturedItem[]>(() => {
-    if (!items || items.length === 0) return [];
-    return items;
-  }, [items]);
-
-  if (items === undefined) {
-    return (
-      <section id="shop" className="py-12 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
-            Featured Crafts from Across India
-          </h2>
-          <div className="h-48 rounded-xl bg-gray-50 border animate-pulse" />
-        </div>
-      </section>
-    );
-  }
-
+  // Use the examples for display and duplicate for seamless loop
+  const list = React.useMemo<FeaturedItem[]>(() => examples, []);
   if (list.length === 0) return null;
-
-  // Duplicate list for seamless looping
   const doubled = [...list, ...list];
 
   return (

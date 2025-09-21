@@ -133,7 +133,8 @@
 }
 
 /* Utility class for the featured crafts carousel */
+/* Make it a bit faster (from 60s to 40s) */
 .featured-marquee {
-  animation: featured-marquee 60s linear infinite;
+  animation: featured-marquee 40s linear infinite;
   will-change: transform;
 }
