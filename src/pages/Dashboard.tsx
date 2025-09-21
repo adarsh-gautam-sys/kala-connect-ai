@@ -243,7 +243,8 @@ export default function Dashboard() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-gray-50"
+      // Improve dark mode background contrast
+      className="min-h-screen bg-gray-50 dark:bg-neutral-950"
     >
       {/* Header - Upgraded Navbar */}
       <div className="bg-white dark:bg-neutral-900 border-b dark:border-neutral-800">
