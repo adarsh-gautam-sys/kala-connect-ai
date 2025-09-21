@@ -29,7 +29,7 @@ export default function CraftPage() {
   // Guard useQuery until we have a valid id to avoid rendering fewer hooks on initial render
   const craft = useQuery(
     api.crafts.getById,
-    id ? ({ id: id as Id<"crafts"> }) : "skip"
+    id ? ({ id: id as Id<"crafts"> }) : undefined
   );
 
   // Move activeIdx state above any potential early returns to keep hook order stable
