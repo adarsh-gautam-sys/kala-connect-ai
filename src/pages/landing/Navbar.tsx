@@ -23,6 +23,7 @@ import React, { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/hooks/use-cart";
+import { useAuth } from "@/hooks/use-auth";
 
 type Props = {
   brand: string;
@@ -84,6 +85,9 @@ function NavbarImpl({
       // no-op
     }
   }, [theme]);
+
+  // Add: auth actions for real sign-out
+  const { signOut } = useAuth();
 
   return (
     <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b shadow-sm">
@@ -175,7 +179,19 @@ function NavbarImpl({
                         <Button variant="outline" className="justify-start">
                           Settings
                         </Button>
-                        <Button variant="destructive" className="justify-start" onClick={() => onNavigate("/auth")}>
+                        {/* Change: real sign out on mobile drawer */}
+                        <Button
+                          variant="destructive"
+                          className="justify-start"
+                          onClick={async () => {
+                            try {
+                              await signOut();
+                              onNavigate("/");
+                            } catch (e) {
+                              console.error("Sign out failed", e);
+                            }
+                          }}
+                        >
                           Logout
                         </Button>
                       </div>
@@ -382,7 +398,17 @@ function NavbarImpl({
                     </AvatarFallback>
                   </Avatar>
                 </Button>
-                <Button variant="outline" onClick={() => onNavigate("/auth")}>
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      await signOut();
+                      onNavigate("/");
+                    } catch (e) {
+                      console.error("Sign out failed", e);
+                    }
+                  }}
+                >
                   Logout
                 </Button>
               </div>
