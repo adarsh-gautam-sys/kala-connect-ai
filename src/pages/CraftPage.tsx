@@ -26,9 +26,14 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 export default function CraftPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const craft = useQuery(api.crafts.getById, { 
-    id: id as Id<"crafts"> 
-  });
+  // Guard useQuery until we have a valid id to avoid rendering fewer hooks on initial render
+  const craft = useQuery(
+    api.crafts.getById,
+    id ? ({ id: id as Id<"crafts"> }) : "skip"
+  );
+
+  // Move activeIdx state above any potential early returns to keep hook order stable
+  const [activeIdx, setActiveIdx] = useState<number>(0);
 
   // Language state
   const [lang, setLang] = useState<"en" | "hi">(() => {
@@ -166,12 +171,6 @@ export default function CraftPage() {
   if (craft.enhancedPhotoUrl) images.push({ src: craft.enhancedPhotoUrl, label: lang === "en" ? "Enhanced" : "एन्हांस्ड" });
   if (craft.craftPhotoUrl) images.push({ src: craft.craftPhotoUrl, label: lang === "en" ? "Original" : "मूल" });
 
-  const [activeIdx, setActiveIdx] = useState<number>(0);
-
-  // Demo price + buy handler (routes to WhatsApp)
-  const demoPrice = Math.max(499, (String(craft._id).length * 137) % 4999);
-  const handleBuyNow = () => handleWhatsAppContact();
-
   // Craft journey steps (status-aware)
   const steps = [
     { key: "uploaded", label: lang === "en" ? "Uploaded" : "अपलोड किया", done: true },
@@ -214,6 +213,15 @@ export default function CraftPage() {
     if (craft.socialCaption) {
       await navigator.clipboard.writeText(craft.socialCaption);
       toast.success(t.copied);
+    }
+  };
+
+  const demoPrice = 1499;
+  const handleBuyNow = () => {
+    if (craft?.whatsappNumber) {
+      handleWhatsAppContact();
+    } else {
+      toast.error(t.whatsappMissing);
     }
   };
 
