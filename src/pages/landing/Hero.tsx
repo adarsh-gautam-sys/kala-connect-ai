@@ -16,13 +16,15 @@ export function Hero({ onShopNow, onGetStarted, title, subtitleStrong, subtitleR
     <section className="border-b">
       <div className="grid grid-cols-1 lg:grid-cols-2">
         <div
-          className="flex items-center"
-          style={{
-            background:
-              "radial-gradient(1200px 600px at -10% 20%, rgba(230, 212, 192, 0.6), transparent 60%), linear-gradient(180deg, #f7f3ee 0%, #efe7de 100%)",
-          }}
+          className="relative flex items-center bg-gradient-to-b from-[#f7f3ee] to-[#efe7de] dark:from-neutral-900 dark:to-neutral-950 overflow-hidden"
         >
-          <div className="w-full max-w-2xl mx-auto px-6 py-16 md:py-24">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-24 top-10 h-[140%] w-[140%] rounded-full 
+            bg-[radial-gradient(closest-side,_rgba(164,85,59,0.14),_transparent_62%)]
+            dark:bg-[radial-gradient(closest-side,_rgba(255,255,255,0.06),_transparent_62%)]"
+          />
+          <div className="w-full max-w-2xl mx-auto px-6 py-16 md:py-24 relative">
             <div className="space-y-6">
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-neutral-900 dark:text-white">
                 {title}
