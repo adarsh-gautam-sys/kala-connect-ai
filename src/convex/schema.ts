@@ -39,7 +39,17 @@ const schema = defineSchema(
       craftPhoto: v.id("_storage"), // File storage ID for craft photo
       voiceNote: v.id("_storage"), // File storage ID for voice note
       
-      // AI-processed content (placeholders for now)
+      // New AI-enhanced fields for KalaSetu
+      audioFileId: v.optional(v.id("_storage")), // Additional audio for AI processing
+      imageFileId: v.optional(v.id("_storage")), // Additional image reference
+      aiStory: v.optional(v.string()), // AI-generated product story
+      aiCaption: v.optional(v.string()), // AI-generated social caption
+      aiTags: v.optional(v.array(v.string())), // AI-generated tags from Vision API
+      transcription: v.optional(v.string()), // Speech-to-text result
+      translation: v.optional(v.string()), // Translated text
+      region: v.optional(v.string()), // For geographic filtering on /explore
+      
+      // AI-processed content (existing fields)
       enhancedPhoto: v.optional(v.id("_storage")), // Enhanced photo from AI
       productDescription: v.optional(v.string()), // Generated description
       socialCaption: v.optional(v.string()), // Generated social media caption
@@ -62,7 +72,17 @@ const schema = defineSchema(
       targetLanguage: v.optional(v.string()), // Translation target
     })
       .index("by_user", ["userId"])
-      .index("by_status", ["status"]),
+      .index("by_status", ["status"])
+      .index("by_region", ["region"]), // New index for geographic filtering
+
+    // Community posts for artisan forum (Kala-Gaon)
+    community_posts: defineTable({
+      userId: v.id("users"),
+      cluster: v.string(), // Geographic or skill-based cluster
+      body: v.string(),
+      title: v.optional(v.string()),
+    })
+      .index("by_cluster", ["cluster"]),
   },
   {
     schemaValidation: false,

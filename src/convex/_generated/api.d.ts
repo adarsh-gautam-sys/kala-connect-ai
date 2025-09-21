@@ -17,6 +17,7 @@ import type * as aiProcessing from "../aiProcessing.js";
 import type * as auth_emailOtp from "../auth/emailOtp.js";
 import type * as auth from "../auth.js";
 import type * as bigquery from "../bigquery.js";
+import type * as community from "../community.js";
 import type * as config from "../config.js";
 import type * as crafts from "../crafts.js";
 import type * as http from "../http.js";
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   "auth/emailOtp": typeof auth_emailOtp;
   auth: typeof auth;
   bigquery: typeof bigquery;
+  community: typeof community;
   config: typeof config;
   crafts: typeof crafts;
   http: typeof http;
