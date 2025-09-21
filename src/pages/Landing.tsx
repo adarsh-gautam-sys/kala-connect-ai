@@ -95,6 +95,16 @@ export default function Landing() {
         "Step into a world of clay and creation with KalaConnect. Discover the perfect blend of tradition and modernity. Build a professional product page with just a photo and a voice note — powered by AI.",
       heroCTA: "Shop Now",
       heroCTASecondary: "Get Started",
+      // New: Navbar labels
+      forArtisans: "For Artisans",
+      stories: "Stories",
+      team: "Team",
+      categories: "Categories",
+      shop: "Shop",
+      featuredArtists: "Featured Artists",
+      joinAsArtisan: "Join as Artisan",
+      pricingBenefits: "Pricing & Benefits",
+      // How it works
       howItWorks: "How it works",
       howItWorksSub: "Create your product page in three simple steps",
       feature1Title: "Upload a Photo",
@@ -105,6 +115,18 @@ export default function Landing() {
       feature3Desc: "We generate a professional page for you",
       feature4Title: "Share",
       feature4Desc: "Share your craft with the world on social media",
+      // Value Props
+      vp1Title: "AI-Powered Storytelling",
+      vp1Desc: "Turn voice notes into compelling product stories and captions.",
+      vp2Title: "Instant Digital Storefront",
+      vp2Desc: "Create a polished page for your craft in minutes.",
+      vp3Title: "Global Reach for Local Crafts",
+      vp3Desc: "Share with buyers worldwide and grow your audience.",
+      // Brand Story
+      brandStoryTitle: "Our Story",
+      brandStoryBody:
+        "KalaConnect empowers artisans with AI tools to showcase their craft, tell their stories, and reach global buyers.",
+      // Stats & CTA & Footer
       trustedBy: "Trusted by Indian artisans",
       trustedBody: "Thousands of artisans are bringing their craft to the world",
       stat1: "1000+",
@@ -140,6 +162,16 @@ export default function Landing() {
         "कलाConnect के साथ मिट्टी और रचनात्मकता की दुनिया में कदम रखें। परंपरा और आधुनिकता का सही मेल खोजें। सिर्फ एक तस्वीर और एक वॉइस नोट से AI की मदद से अपना प्रोफेशनल प्रोडक्ट पेज बनाएं।",
       heroCTA: "अभी देखें",
       heroCTASecondary: "अभी शुरू करें",
+      // Navbar labels
+      forArtisans: "कलाकारों के लिए",
+      stories: "कहानियाँ",
+      team: "टीम",
+      categories: "श्रेणियाँ",
+      shop: "दुकान",
+      featuredArtists: "चयनित कलाकार",
+      joinAsArtisan: "कलाकार बनें",
+      pricingBenefits: "मूल्य एवं लाभ",
+      // How it works
       howItWorks: "कैसे काम करता है?",
       howItWorksSub: "सिर्फ तीन आसान चरणों में अपना प्रोडक्ट पेज बनाएं",
       feature1Title: "फोटो अपलोड करें",
@@ -150,6 +182,18 @@ export default function Landing() {
       feature3Desc: "हम आपके लिए प्रोफेशनल पेज बनाते हैं",
       feature4Title: "शेयर करें",
       feature4Desc: "सोशल मीडिया पर दुनिया के साथ साझा करें",
+      // Value Props
+      vp1Title: "AI-समर्थित कहानी",
+      vp1Desc: "वॉइस नोट्स को प्रभावी उत्पाद कहानियों और कैप्शन में बदलें।",
+      vp2Title: "तुरंत डिजिटल storefront",
+      vp2Desc: "मिनटों में अपने शिल्प का पॉलिश्ड पेज बनाएं।",
+      vp3Title: "स्थानीय शिल्प का वैश्विक पहुँच",
+      vp3Desc: "दुनियाभर के खरीदारों के साथ साझा करें और अपनी पहुंच बढ़ाएं।",
+      // Brand Story
+      brandStoryTitle: "हमारी कहानी",
+      brandStoryBody:
+        "KalaConnect कलाकारों को AI टूल्स से सशक्त बनाता है ताकि वे अपना शिल्प दिखा सकें, अपनी कहानी कह सकें और वैश्विक खरीदारों तक पहुँच सकें।",
+      // Stats & CTA & Footer
       trustedBy: "भारत के कलाकारों का भरोसा",
       trustedBody: "हजारों कलाकार अपने शिल्प को दुनिया तक पहुंचा रहे हैं",
       stat1: "1000+",
@@ -206,7 +250,7 @@ export default function Landing() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
-      className="min-h-screen bg-white"
+      className="min-h-screen bg-white dark:bg-neutral-950"
     >
       {/* Navbar */}
       <Navbar
@@ -220,16 +264,31 @@ export default function Landing() {
       />
 
       {/* Hero */}
-      <Hero onShopNow={scrollToShop} onGetStarted={handleGetStarted} />
+      <Hero
+        onShopNow={scrollToShop}
+        onGetStarted={handleGetStarted}
+        title={`${t.heroTitleLine1} ${t.heroTitleLine2}`}
+        subtitleStrong={t.heroSubTitleStrong}
+        subtitleRest={t.heroSubTitle}
+        body={t.heroBody}
+        ctaPrimary={t.heroCTA}
+        ctaSecondary={t.heroCTASecondary}
+      />
 
       {/* Featured */}
       <FeaturedCraftsCarousel />
 
       {/* Value Props */}
-      <ValueProps />
+      <ValueProps
+        items={[
+          { icon: Sparkles, title: t.vp1Title, desc: t.vp1Desc, color: "bg-[#a4553b]" },
+          { icon: Upload, title: t.vp2Title, desc: t.vp2Desc, color: "bg-[#8f4731]" },
+          { icon: Globe, title: t.vp3Title, desc: t.vp3Desc, color: "bg-[#73402b]" },
+        ]}
+      />
 
       {/* Brand Story */}
-      <BrandStory />
+      <BrandStory title={t.brandStoryTitle} body={t.brandStoryBody} />
 
       {/* How It Works */}
       <HowItWorks

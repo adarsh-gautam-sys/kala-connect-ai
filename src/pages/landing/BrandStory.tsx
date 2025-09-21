@@ -1,13 +1,17 @@
-export function BrandStory() {
+type Props = {
+  title: string;
+  body: string;
+};
+
+export function BrandStory({ title, body }: Props) {
   return (
-    <section id="brand-story" className="py-16 md:py-20 bg-[#f7f3ee]">
+    <section id="brand-story" className="py-16 md:py-20 bg-[#f7f3ee] dark:bg-neutral-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Story</h2>
-            <p className="text-lg text-gray-700">
-              KalaConnect empowers artisans with AI tools to showcase their craft, tell their stories, and reach global
-              buyers.
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">{title}</h2>
+            <p className="text-lg text-gray-700 dark:text-neutral-300">
+              {body}
             </p>
           </div>
           <div className="grid grid-cols-3 gap-3">

@@ -90,7 +90,7 @@ function NavbarImpl({
   const { signOut } = useAuth();
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b shadow-sm">
+    <nav className="sticky top-0 z-50 bg-white/90 dark:bg-neutral-900/80 backdrop-blur border-b dark:border-white/10 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-3">
           <div className="flex items-center gap-3">
@@ -100,55 +100,57 @@ function NavbarImpl({
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-80">
+              <SheetContent side="left" className="w-80 dark:bg-neutral-950 dark:text-white">
                 <SheetHeader>
                   <SheetTitle>{t.brand}</SheetTitle>
                 </SheetHeader>
                 <div className="mt-6 space-y-4">
                   <div>
-                    <div className="text-xs uppercase text-gray-500 mb-2">Shop</div>
+                    <div className="text-xs uppercase text-gray-500 dark:text-neutral-400 mb-2">{t.shop || "Shop"}</div>
                     <div className="grid gap-2">
                       <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/shop")}>
                         {t.shopAll}
                       </Button>
-                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/shop?category=Ceramics")}>Categories</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/shop?category=Ceramics")}>
+                        {t.categories || "Categories"}
+                      </Button>
                     </div>
                   </div>
 
                   <div>
-                    <div className="text-xs uppercase text-gray-500 mb-2">For Artisans</div>
+                    <div className="text-xs uppercase text-gray-500 dark:text-neutral-400 mb-2">{t.forArtisans}</div>
                     <div className="grid gap-2">
-                      <Button variant="ghost" className="justify-start" onClick={() => scrollToId("how-it-works")}>How It Works</Button>
-                      <Button variant="ghost" className="justify-start" onClick={joinAsArtisan}>Join as Artisan</Button>
-                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/artisans")}>Pricing & Benefits</Button>
-                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/stories")}>Success Stories</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => scrollToId("how-it-works")}>{t.howItWorks}</Button>
+                      <Button variant="ghost" className="justify-start" onClick={joinAsArtisan}>{t.joinAsArtisan || "Join as Artisan"}</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/artisans")}>{t.pricingBenefits || "Pricing & Benefits"}</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/stories")}>{t.featuredArtists || "Featured Artists"}</Button>
                     </div>
                   </div>
 
                   <div>
-                    <div className="text-xs uppercase text-gray-500 mb-2">Stories</div>
+                    <div className="text-xs uppercase text-gray-500 dark:text-neutral-400 mb-2">{t.stories}</div>
                     <div className="grid gap-2">
-                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/stories")}>Featured Artists</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/stories")}>{t.featuredArtists || "Featured Artists"}</Button>
                     </div>
                   </div>
 
                   <div>
-                    <div className="text-xs uppercase text-gray-500 mb-2">About</div>
+                    <div className="text-xs uppercase text-gray-500 dark:text-neutral-400 mb-2">{t.about}</div>
                     <div className="grid gap-2">
                       <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/about")}>{t.about}</Button>
-                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/team")}>Team</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/team")}>{t.team || "Team"}</Button>
                     </div>
                   </div>
 
                   <div>
-                    <div className="text-xs uppercase text-gray-500 mb-2">Contact</div>
+                    <div className="text-xs uppercase text-gray-500 dark:text-neutral-400 mb-2">{t.contact}</div>
                     <div className="grid gap-2">
                       <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/contact")}>{t.contact}</Button>
                     </div>
                   </div>
 
                   <div>
-                    <div className="text-xs uppercase text-gray-500 mb-2">Language</div>
+                    <div className="text-xs uppercase text-gray-500 dark:text-neutral-400 mb-2">Language</div>
                     <div className="grid gap-2">
                       <Button
                         variant={lang === "en" ? "default" : "outline"}
@@ -227,28 +229,28 @@ function NavbarImpl({
           <div className="hidden md:flex items-center gap-2 lg:gap-4">
             <Button
               variant="ghost"
-              className={`${pathname.startsWith("/dashboard") ? "text-neutral-900 bg-neutral-100" : "text-gray-700"} hover:text-neutral-900`}
+              className={`${pathname.startsWith("/dashboard") ? "text-neutral-900 bg-neutral-100 dark:text-white dark:bg-white/10" : "text-gray-700 dark:text-neutral-200"} hover:text-neutral-900 dark:hover:text-white`}
               onClick={() => scrollToId("how-it-works")}
             >
-              For Artisans
+              {t.forArtisans}
             </Button>
             <Button
               variant="ghost"
-              className="text-gray-700 hover:text-neutral-900"
+              className="text-gray-700 dark:text-neutral-200 hover:text-neutral-900 dark:hover:text-white"
               onClick={() => onNavigate("/stories")}
             >
-              Stories
+              {t.stories}
             </Button>
             <Button
               variant="ghost"
-              className="text-gray-700 hover:text-neutral-900"
+              className="text-gray-700 dark:text-neutral-200 hover:text-neutral-900 dark:hover:text-white"
               onClick={() => onNavigate("/about")}
             >
               {t.about}
             </Button>
             <Button
               variant="ghost"
-              className="text-gray-700 hover:text-neutral-900"
+              className="text-gray-700 dark:text-neutral-200 hover:text-neutral-900 dark:hover:text-white"
               onClick={() => onNavigate("/contact")}
             >
               {t.contact}
