@@ -109,7 +109,7 @@ function NavbarImpl({
                     <div className="text-xs uppercase text-gray-500 mb-2">Shop</div>
                     <div className="grid gap-2">
                       <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/shop")}>
-                        Shop All
+                        {t.shopAll}
                       </Button>
                       <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/shop?category=Ceramics")}>Categories</Button>
                     </div>
@@ -135,7 +135,7 @@ function NavbarImpl({
                   <div>
                     <div className="text-xs uppercase text-gray-500 mb-2">About</div>
                     <div className="grid gap-2">
-                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/about")}>About Us</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/about")}>{t.about}</Button>
                       <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/team")}>Team</Button>
                     </div>
                   </div>
@@ -143,7 +143,7 @@ function NavbarImpl({
                   <div>
                     <div className="text-xs uppercase text-gray-500 mb-2">Contact</div>
                     <div className="grid gap-2">
-                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/contact")}>Contact Form</Button>
+                      <Button variant="ghost" className="justify-start" onClick={() => onNavigate("/contact")}>{t.contact}</Button>
                     </div>
                   </div>
 
@@ -227,11 +227,7 @@ function NavbarImpl({
           <div className="hidden md:flex items-center gap-2 lg:gap-4">
             <Button
               variant="ghost"
-              className={`${
-                pathname.startsWith("/dashboard")
-                  ? "text-neutral-900 bg-neutral-100"
-                  : "text-gray-700"
-              } hover:text-neutral-900`}
+              className={`${pathname.startsWith("/dashboard") ? "text-neutral-900 bg-neutral-100" : "text-gray-700"} hover:text-neutral-900`}
               onClick={() => scrollToId("how-it-works")}
             >
               For Artisans
@@ -248,14 +244,14 @@ function NavbarImpl({
               className="text-gray-700 hover:text-neutral-900"
               onClick={() => onNavigate("/about")}
             >
-              About
+              {t.about}
             </Button>
             <Button
               variant="ghost"
               className="text-gray-700 hover:text-neutral-900"
               onClick={() => onNavigate("/contact")}
             >
-              Contact
+              {t.contact}
             </Button>
           </div>
 
@@ -276,7 +272,7 @@ function NavbarImpl({
               variant="ghost"
               className="hidden md:inline-flex"
             >
-              Shop
+              {t.shopAll}
             </Button>
 
             <Button
