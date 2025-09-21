@@ -276,7 +276,29 @@ function NavbarImpl({
 
             <Sheet open={cartOpen} onOpenChange={setCartOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" className="inline-flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="relative sm:hidden"
+                  aria-label="Open cart"
+                  title="Open cart"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  {count > 0 ? (
+                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-neutral-900 text-white text-[10px] flex items-center justify-center">
+                      {count}
+                    </span>
+                  ) : null}
+                </Button>
+              </SheetTrigger>
+
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="hidden sm:inline-flex items-center gap-2"
+                  aria-label="Open cart"
+                  title="Open cart"
+                >
                   <ShoppingCart className="h-4 w-4" />
                   {count > 0 ? <span className="ml-1 text-sm font-semibold">({count})</span> : null}
                 </Button>
