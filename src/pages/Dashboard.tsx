@@ -230,13 +230,12 @@ export default function Dashboard() {
   };
 
   const handleSeedDemo = async () => {
-    try {
-      toast.loading(lang === "en" ? "Seeding demo crafts..." : "डेमो शिल्प जोड़े जा रहे हैं...");
-      await seedDemo({});
-      toast.success(lang === "en" ? "Demo crafts added" : "डेमो शिल्प जोड़ दिए गए");
-    } catch {
-      toast.error(lang === "en" ? "Failed to add demo crafts" : "डेमो शिल्प जोड़ने में विफल");
-    }
+    const msg = {
+      loading: lang === "en" ? "Seeding demo crafts..." : "डेमो शिल्प जोड़े जा रहे हैं...",
+      success: lang === "en" ? "Demo crafts added" : "डेमो शिल्प जोड़ दिए गए",
+      error: lang === "en" ? "Failed to add demo crafts" : "डेमो शिल्प जोड़ने में विफल",
+    };
+    await toast.promise(seedDemo({}), msg);
   };
 
   return (
