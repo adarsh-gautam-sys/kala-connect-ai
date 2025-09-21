@@ -72,6 +72,14 @@ export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "mostViewed">("newest");
 
+  // Add: local like helpers
+  const isLiked = (id: string) => localStorage.getItem(`like:d:${id}`) === "1";
+  const toggleLike = (id: string) => {
+    const key = `like:d:${id}`;
+    const next = localStorage.getItem(key) === "1" ? "0" : "1";
+    localStorage.setItem(key, next);
+  };
+
   // Derive filtered/sorted crafts for display (UI-only sort/filter)
   const derivedCrafts = (crafts || [])
     .filter((c) =>
@@ -243,6 +251,16 @@ export default function Dashboard() {
               <span className="hidden md:inline text-gray-600 dark:text-gray-300">{t.subtitle}</span>
             </div>
             <div className="flex items-center gap-2">
+              {/* Quick actions */}
+              <Button variant="outline" onClick={() => scrollToSection("analytics")} className="hidden md:inline-flex">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                View Analytics
+              </Button>
+              <Button variant="outline" onClick={() => navigate("/auth")} className="hidden md:inline-flex">
+                <Settings className="h-4 w-4 mr-2" />
+                Edit Profile
+              </Button>
+
               {/* Home */}
               <Button variant="outline" onClick={() => navigate("/")} className="hidden sm:inline-flex">
                 Home
@@ -273,8 +291,9 @@ export default function Dashboard() {
               </Button>
 
               {/* Notifications */}
-              <Button variant="outline" aria-label="Notifications" title="Notifications">
+              <Button variant="outline" aria-label="Notifications" title="Notifications" className="relative">
                 <Bell className="h-4 w-4" />
+                <span className="absolute -top-1 -right-1 inline-flex h-2.5 w-2.5 rounded-full bg-pink-600" />
               </Button>
 
               {/* Profile Avatar */}
@@ -436,10 +455,11 @@ export default function Dashboard() {
                   </motion.div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {derivedCrafts.map((craft, index) => {
-                      // Demo stats & tags
+                    {(derivedCrafts || []).map((craft, index) => {
                       const views = String(craft._id).length * 23;
-                      const likes = Math.max(1, Math.round(views * 0.2));
+                      const baseLikes = Math.max(1, Math.round(views * 0.2));
+                      const liked = isLiked(String(craft._id));
+                      const likes = baseLikes + (liked ? 1 : 0);
                       const clicks = Math.max(1, Math.round(views * 0.1));
                       const tags = index % 2 === 0 ? ["Art", "Ceramics"] : ["Handmade", "Local"];
 
@@ -511,14 +531,27 @@ export default function Dashboard() {
                                 ))}
                               </div>
 
-                              {/* Small Stats */}
+                              {/* Small Stats with Like interaction */}
                               <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300 mb-4">
                                 <div className="flex items-center gap-1">
                                   <Eye className="h-4 w-4" /> {views}
                                 </div>
-                                <div className="flex items-center gap-1">
-                                  <Heart className="h-4 w-4" /> {likes}
-                                </div>
+                                <motion.button
+                                  onClick={() => {
+                                    toggleLike(String(craft._id));
+                                    // force a micro rerender by dispatching storage event to same tab
+                                    window.dispatchEvent(new StorageEvent("storage", { key: `like:d:${craft._id}` }));
+                                  }}
+                                  whileTap={{ scale: 0.9 }}
+                                  animate={{ scale: liked ? [1, 1.2, 1] : 1 }}
+                                  transition={{ duration: 0.2 }}
+                                  className={`inline-flex items-center gap-1 px-2 py-1 rounded-md border ${
+                                    liked ? "text-pink-600 border-pink-200 bg-pink-50" : "hover:bg-gray-50"
+                                  }`}
+                                  title={liked ? "Liked" : "Like"}
+                                >
+                                  <Heart className={`h-4 w-4 ${liked ? "fill-pink-600" : ""}`} /> {likes}
+                                </motion.button>
                                 <div className="flex items-center gap-1">
                                   <BarChart3 className="h-4 w-4" /> {clicks}
                                 </div>

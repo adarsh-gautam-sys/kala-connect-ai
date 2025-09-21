@@ -14,11 +14,13 @@ import {
   Clock,
   Loader2,
   ExternalLink,
-  Globe
+  Globe,
+  BadgeCheck
 } from "lucide-react";
 import { useParams, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 export default function CraftPage() {
   const { id } = useParams<{ id: string }>();
@@ -36,6 +38,50 @@ export default function CraftPage() {
     localStorage.setItem("lang", lang);
     document.documentElement.lang = lang === "en" ? "en" : "hi";
   }, [lang]);
+
+  // Add: local like state (persisted)
+  const [liked, setLiked] = useState<boolean>(() => {
+    const key = id ? `like:c:${id}` : "";
+    return key ? localStorage.getItem(key) === "1" : false;
+  });
+  useEffect(() => {
+    const key = id ? `like:c:${id}` : "";
+    if (key) localStorage.setItem(key, liked ? "1" : "0");
+  }, [liked, id]);
+
+  // Add: simple confetti
+  function launchConfetti() {
+    const count = 80;
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement("div");
+      el.className = "pointer-events-none fixed top-1/2 left-1/2 w-2 h-2 rounded-sm";
+      el.style.background = `hsl(${Math.random() * 360},80%,60%)`;
+      el.style.transform = `translate(-50%,-50%)`;
+      const dx = (Math.random() - 0.5) * 400;
+      const dy = (Math.random() - 0.5) * 300;
+      const duration = 600 + Math.random() * 700;
+      el.animate(
+        [
+          { transform: `translate(-50%,-50%)`, opacity: 1 },
+          { transform: `translate(${dx}px, ${dy}px)`, opacity: 0 },
+        ],
+        { duration, easing: "cubic-bezier(.21,1,.22,1)", fill: "forwards" }
+      );
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), duration + 50);
+    }
+  }
+
+  // Add: tip modal state
+  const [tipOpen, setTipOpen] = useState(false);
+  const [tipAmount, setTipAmount] = useState<number>(100);
+
+  const onTip = () => {
+    // Simulate successful tip
+    setTipOpen(false);
+    launchConfetti();
+    toast.success(lang === "en" ? "Thank you for supporting the artisan!" : "कलाकार का समर्थन करने के लिए धन्यवाद!");
+  };
 
   const copy = {
     en: {
@@ -164,6 +210,9 @@ export default function CraftPage() {
     }
   };
 
+  // Small helper for verified badge (heuristic)
+  const isVerified = craft.status === "completed" && !!craft.whatsappNumber;
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -184,8 +233,14 @@ export default function CraftPage() {
                 {t.back}
               </Button>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">
+                <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                   {t.craftOf(craft.artisanName)}
+                  {isVerified && (
+                    <span className="inline-flex items-center gap-1 text-green-600 text-xs font-medium">
+                      <BadgeCheck className="h-4 w-4" />
+                      {lang === "en" ? "Verified Artisan" : "सत्यापित कलाकार"}
+                    </span>
+                  )}
                 </h1>
                 {getStatusBadge()}
               </div>
@@ -200,11 +255,22 @@ export default function CraftPage() {
                 <Globe className="h-4 w-4 mr-2" />
                 {t.langToggle}
               </Button>
+              {/* Like button with pop animation */}
+              <motion.button
+                onClick={() => setLiked((v) => !v)}
+                whileTap={{ scale: 0.9 }}
+                animate={{ scale: liked ? [1, 1.25, 1] : 1 }}
+                transition={{ duration: 0.25 }}
+                className={`inline-flex items-center justify-center rounded-md border px-3 py-2 text-sm ${
+                  liked ? "text-pink-600 border-pink-200 bg-pink-50" : "text-gray-700 hover:bg-gray-50"
+                }`}
+                aria-pressed={liked}
+                title={liked ? (lang === "en" ? "Liked" : "पसंद किया") : (lang === "en" ? "Like" : "पसंद")}
+              >
+                <Heart className={`h-4 w-4 ${liked ? "fill-pink-600" : ""}`} />
+              </motion.button>
               <Button variant="outline" size="sm" onClick={handleShare}>
                 <Share2 className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="sm">
-                <Heart className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -330,10 +396,10 @@ export default function CraftPage() {
               </Card>
             )}
 
-            {/* Contact Button */}
+            {/* Contact + Tip */}
             {craft.whatsappNumber && (
               <Card>
-                <CardContent className="pt-6">
+                <CardContent className="pt-6 space-y-3">
                   <Button
                     onClick={handleWhatsAppContact}
                     className="w-full bg-green-600 hover:bg-green-700"
@@ -342,13 +408,53 @@ export default function CraftPage() {
                     <MessageCircle className="h-5 w-5 mr-2" />
                     {t.contactWhatsApp}
                   </Button>
-                  <p className="text-center text-sm text-gray-600 mt-2">{t.contactHint}</p>
+                  <p className="text-center text-sm text-gray-600">{t.contactHint}</p>
+                  {/* Tip this Artisan */}
+                  <Button
+                    variant="outline"
+                    className="w-full hover:scale-[1.01] transition-transform"
+                    onClick={() => setTipOpen(true)}
+                  >
+                    💝 {lang === "en" ? "Tip this Artisan" : "इस कलाकार को टिप दें"}
+                  </Button>
                 </CardContent>
               </Card>
             )}
           </div>
         </div>
       </div>
+
+      {/* Tip Modal */}
+      <Dialog open={tipOpen} onOpenChange={setTipOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{lang === "en" ? "Support the Artisan" : "कलाकार का समर्थन करें"}</DialogTitle>
+            <DialogDescription>
+              {lang === "en" ? "Choose a tip amount. Thank you for your support!" : "एक टिप राशि चुनें। आपके समर्थन के लिए धन्यवाद!"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid grid-cols-3 gap-2">
+            {[50, 100, 200].map((amt) => (
+              <Button
+                key={amt}
+                variant={tipAmount === amt ? "default" : "outline"}
+                onClick={() => setTipAmount(amt)}
+                className={tipAmount === amt ? "bg-pink-600 hover:bg-pink-700" : ""}
+              >
+                ₹{amt}
+              </Button>
+            ))}
+          </div>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button variant="outline" onClick={() => setTipOpen(false)}>
+              {lang === "en" ? "Cancel" : "रद्द करें"}
+            </Button>
+            <Button onClick={onTip} className="bg-pink-600 hover:bg-pink-700">
+              {lang === "en" ? "Send Tip" : "टिप भेजें"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }
