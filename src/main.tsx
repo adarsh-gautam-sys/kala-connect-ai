@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { VlyToolbar } from "../vly-toolbar-readonly.tsx";
 import { InstrumentationProvider } from "@/instrumentation.tsx";
+import "@/instrumentation.data"; // Data service abstraction layer bootstrap
 import AuthPage from "@/pages/Auth.tsx";
 import Dashboard from "@/pages/Dashboard.tsx";
 import Upload from "@/pages/Upload.tsx";
