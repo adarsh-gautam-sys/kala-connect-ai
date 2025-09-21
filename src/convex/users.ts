@@ -1,6 +1,6 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { query, QueryCtx } from "./_generated/server";
-import { mutation } from "./_generated/server";
+import { query, mutation } from "./_generated/server";
+import type { QueryCtx, MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 
 /**
@@ -26,7 +26,7 @@ export const currentUser = query({
  * @param ctx
  * @returns
  */
-export const getCurrentUser = async (ctx: QueryCtx) => {
+export const getCurrentUser = async (ctx: QueryCtx | MutationCtx) => {
   const userId = await getAuthUserId(ctx);
   if (userId === null) {
     return null;

@@ -73,7 +73,8 @@ const schema = defineSchema(
     })
       .index("by_user", ["userId"])
       .index("by_status", ["status"])
-      .index("by_region", ["region"]), // New index for geographic filtering
+      .index("by_region", ["region"])
+      .index("by_region_and_status", ["region", "status"]), // New index
 
     // Community posts for artisan forum (Kala-Gaon)
     community_posts: defineTable({

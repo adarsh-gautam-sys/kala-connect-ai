@@ -197,17 +197,19 @@ export const setRegion = mutation({
 export const getByRegion = query({
   args: { region: v.string() },
   handler: async (ctx, args) => {
+    // Use composite index instead of filter to avoid full table scan
     const crafts = await ctx.db
       .query("crafts")
-      .withIndex("by_region", (q) => q.eq("region", args.region))
-      .filter((q) => q.eq(q.field("status"), "completed"))
+      .withIndex("by_region_and_status", (q) =>
+        q.eq("region", args.region).eq("status", "completed")
+      )
       .collect();
 
     // Get file URLs for each craft
     const craftsWithUrls = await Promise.all(
       crafts.map(async (craft) => {
         const craftPhotoUrl = await ctx.storage.getUrl(craft.craftPhoto);
-        const enhancedPhotoUrl = craft.enhancedPhoto 
+        const enhancedPhotoUrl = craft.enhancedPhoto
           ? await ctx.storage.getUrl(craft.enhancedPhoto)
           : null;
 

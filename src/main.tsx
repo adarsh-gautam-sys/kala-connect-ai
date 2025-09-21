@@ -1,5 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
-import { VlyToolbar } from "../vly-toolbar-readonly.tsx";
+/* removed VlyToolbar import */
 import { InstrumentationProvider } from "@/instrumentation.tsx";
 import "@/instrumentation.data"; // Data service abstraction layer bootstrap
 import AuthPage from "@/pages/Auth.tsx";
@@ -90,7 +90,7 @@ function RouteSyncer() {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <VlyToolbar />
+    {/* VlyToolbar removed */}
     <InstrumentationProvider>
       <ConvexAuthProvider client={convex}>
         <BrowserRouter>

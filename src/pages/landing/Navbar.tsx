@@ -7,18 +7,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  Menu,
-  ChevronDown,
-  User as UserIcon,
-  Settings as SettingsIcon,
-  LogOut as LogOutIcon,
-  Globe,
-  ShoppingCart,
-  Heart,
-  Sun,
-  Moon,
-} from "lucide-react";
+import { Menu, Globe, ShoppingCart, Sun, Moon } from "lucide-react";
 import React, { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";

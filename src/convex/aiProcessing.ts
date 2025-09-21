@@ -49,18 +49,21 @@ export const processCraft = action({
       // Step 4: Enhance photo (placeholder for now)
       const enhancedPhotoId = await enhancePhoto(craft.craftPhoto);
 
-      // Update craft with results
-      await ctx.runMutation(api.crafts.updateWithAIResults, {
+      // Update craft with results (omit undefined fields)
+      const updateArgs: Record<string, any> = {
         id: args.craftId,
         transcribedText,
         translatedText,
         productDescription,
         socialCaption,
-        enhancedPhoto: enhancedPhotoId,
         language: detectedLanguage,
         targetLanguage: "en",
         status: "completed",
-      });
+      };
+      if (enhancedPhotoId) {
+        updateArgs.enhancedPhoto = enhancedPhotoId;
+      }
+      await ctx.runMutation(api.crafts.updateWithAIResults, updateArgs);
 
       return { success: true };
     } catch (error) {

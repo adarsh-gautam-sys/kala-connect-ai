@@ -1,46 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { motion } from "framer-motion";
-import { 
-  Camera, 
-  Mic, 
-  Sparkles, 
-  Users, 
-  Globe, 
-  ArrowRight,
-  Upload,
-  MessageCircle,
-  Share2
-} from "lucide-react";
-import { useNavigate } from "react-router";
+import { Camera, Mic, Sparkles, Globe, Upload, Share2 } from "lucide-react";
+import { useNavigate, useLocation } from "react-router";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
-  Menu,
-  Bell,
-  ShoppingCart,
-  ChevronDown,
-  User as UserIcon,
-  Settings as SettingsIcon,
-  LogOut as LogOutIcon,
-} from "lucide-react";
 import { Navbar } from "./landing/Navbar";
 import { Hero } from "./landing/Hero";
 import FeaturedCraftsCarousel from "@/components/FeaturedCraftsCarousel";
